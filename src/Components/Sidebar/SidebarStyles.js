@@ -1,0 +1,107 @@
+const styles = {
+  sidebar: {
+    width: '320px',
+    backgroundColor: '#1a1d21',
+    color: 'white',
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    borderLeft: '1px solid #393c42',
+    overflowY: 'auto',
+    height: '100vh',
+  },
+  sidebarContent: {
+    flex: 1,
+  },
+  sidebarHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  sidebarTitle: {
+    fontSize: '16px',
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  refreshButton: {
+    background: 'transparent',
+    border: 'none',
+    color: '#9ca3af',
+    cursor: 'pointer',
+  },
+  newsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    marginBottom: '20px',
+  },
+  newsItem: {
+    padding: '16px',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  newsHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+  },
+  newsDateContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  newsBadge: {
+    fontSize: '10px',
+    padding: '2px 6px',
+    borderRadius: '6px',
+    fontWeight: '600',
+  },
+  newsBadgeBreaking: {
+    backgroundColor: 'rgba(248, 113, 113, 0.1)',
+    color: '#f87171',
+  },
+  newsBadgeUpdate: {
+    backgroundColor: 'rgba(96, 165, 250, 0.1)',
+    color: '#60a5fa',
+  },
+  newsBadgeDefault: {
+    backgroundColor: 'rgba(156, 163, 175, 0.1)',
+    color: '#9ca3af',
+  },
+  newsTitle: {
+    fontSize: '14px',
+    fontWeight: '600',
+    marginBottom: '4px',
+    color: 'white',
+  },
+  newsContent: {
+    fontSize: '12px',
+    color: '#d1d5db',
+    lineHeight: '1.5',
+  },
+  viewAllButton: {
+    width: '100%',
+    padding: '12px',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: '10px',
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    transition: 'all 0.3s ease',
+  },
+};
+
+export default styles;
