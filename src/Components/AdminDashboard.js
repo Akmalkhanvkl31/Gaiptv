@@ -59,7 +59,7 @@ const SettingsManager = () => {
   );
 };
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -222,10 +222,6 @@ const AdminDashboard = () => {
       setNews(prev => prev.filter(n => n.id !== id));
     }
     alert(`${type} deleted successfully`);
-  };
-
-  const onClose = () => {
-    setShowAdmin(false);
   };
 
   if (!showAdmin) {

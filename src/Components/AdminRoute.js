@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAdminAuth } from '../hooks/useAdminAuth';
-import AdminPage from './AdminPage';
-import AccessDenied from './AccessDenied';
+import { Navigate } from 'react-router-dom';
+import AdminLogin from './AdminLogin';
 
-const AdminRoute = ({ onClose }) => {
+const AdminRoute = ({ children }) => {
   const { isAdmin, loading } = useAdminAuth();
 
   if (loading) {
@@ -11,10 +11,10 @@ const AdminRoute = ({ onClose }) => {
   }
 
   if (!isAdmin) {
-    return <AccessDenied onClose={onClose} />;
+    return <Navigate to="/admin/login" replace />;
   }
 
-  return <AdminPage onClose={onClose} />;
+  return children;
 };
 
 export default AdminRoute;

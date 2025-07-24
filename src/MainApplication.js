@@ -1,23 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './Components/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './Components/AuthContext';
 import Header from './Components/Header';
 import LivePlayer from './Components/LivePlayer';
 import VideoGrid from './Components/VideoGrid';
 import Sidebar from './Components/Sidebar';
 import MiniPlayer from './Components/MiniPlayer';
 import NewsPopup from './Components/NewsPopup';
-import AuthScreen from './Components/AuthScreen';
-import About from './Components/About/About';
 import AdBanner from './Components/AdBanner';
-import GuestLanding from './Components/GuestLanding';
 import ShimmerLoading from './Components/ShimmerLoading';
 import mockData from './Components/mockData';
 import styles from './Components/Styles';
 import cssAnimations from './Components/cssAnimations';
-import logo from './Assets/GaipLogo.png';
-import AdminPage from './Components/AdminPage';
-import AdminRoute from './Components/AdminRoute';
 
 const MainApplication = () => {
     const {
@@ -504,88 +498,4 @@ const MainApplication = () => {
     );
 };
 
-const AppContent = () => {
-    const { user, loading: authLoading, isAuthenticated } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 500);
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        if (!authLoading && !isLoading) {
-            if (isAuthenticated) {
-                if (location.pathname === '/guest' || location.pathname === '/auth') {
-                    navigate('/');
-                }
-            } else {
-                if (location.pathname !== '/about' && location.pathname !== '/auth') {
-                   navigate('/guest');
-                }
-            }
-        }
-    }, [authLoading, isLoading, isAuthenticated, navigate, location.pathname]);
-
-    if (authLoading || isLoading) {
-        return (
-            <div style={styles.loadingScreen}>
-                <style>{cssAnimations}</style>
-                <div style={styles.loadingContent} className="loading-content">
-                    <div style={styles.loadingLogo} className="loading-logo">
-                        <div style={styles.authLogoIcon}>
-                            <img src={logo} alt="GAIP Logo" style={{ width: '100%', height: '100%', borderRadius: '15px' }} />
-                        </div>
-                    </div>
-                    <h1 style={styles.loadingTitle} className="loading-title">GAIPTV</h1>
-                    <p style={styles.loadingSubtitle} className="loading-subtitle">
-                        {authLoading ? 'Authenticating...' : 'Loading App...'}
-                    </p>
-                    <div style={styles.loadingBar} className="loading-bar">
-                        <div style={styles.loadingProgress}></div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <Routes>
-            <Route path="/guest" element={
-                <GuestLanding
-                    onSignIn={() => navigate('/auth')}
-                    onSignUp={() => navigate('/auth')}
-                    liveStreams={mockData.liveStreams}
-                    featuredVideos={mockData.featuredVideos}
-                    news={mockData.news}
-                />
-            } />
-            <Route path="/auth" element={<AuthScreen onClose={() => navigate(-1)} isOverlay={true} />} />
-            <Route path="/about" element={<About user={user} onClose={() => navigate(-1)} />} />
-            
-            <Route path="/admin" element={
-                <AdminRoute>
-                    <AdminPage onClose={() => navigate('/')} />
-                </AdminRoute>
-            } />
-
-            <Route path="/*" element={
-                isAuthenticated ? <MainApplication /> : <Navigate to="/guest" replace />
-            } />
-        </Routes>
-    );
-};
-
-const App = () => {
-    return (
-        <AuthProvider>
-            <Router>
-                <AppContent />
-            </Router>
-        </AuthProvider>
-    );
-};
-
-export default App;
+export default MainApplication;

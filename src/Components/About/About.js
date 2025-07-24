@@ -18,7 +18,7 @@ import {
   BarChart3
 } from 'lucide-react';
 
-const About = ({ user, onClose }) => {
+const About = ({ user }) => {
   const [activeSection, setActiveSection] = useState('overview');
   const [isVisible, setIsVisible] = useState(false);
 
@@ -28,9 +28,6 @@ const About = ({ user, onClose }) => {
 
   const handleClose = () => {
     setIsVisible(false);
-    setTimeout(() => {
-      onClose && onClose();
-    }, 300);
   };
 
   const stats = [
