@@ -19,7 +19,7 @@ import {
 import { useAuth } from './AuthContext';
 import styles from './Styles';
 
-const AuthScreen = ({ onClose, isOverlay = false }) => {
+const AuthScreen = ({ onSignUp, onClose, isOverlay = false }) => {
   const { signIn, signUp, signInWithMagicLink, signInWithOAuth, loading } = useAuth();
   
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -114,6 +114,9 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
           setErrors({ general: result.error });
         } else {
           setSuccessMessage('Account created! Please check your email to verify your account.');
+          if (onSignUp) {
+            onSignUp();
+          }
         }
       }
     } catch (error) {

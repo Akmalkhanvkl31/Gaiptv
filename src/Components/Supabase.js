@@ -284,10 +284,11 @@ export const dbHelpers = {
   getUserProfile: async (userId) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .limit(1)
+      .maybeSingle();;
       
       if (error) {
         // Don't log error if profile doesn't exist yet

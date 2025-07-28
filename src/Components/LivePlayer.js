@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import PlayerOverlay from './PlayerOverlay';
-import ProgressIndicator from './ProgressIndicator';
-import VideoIframe from './VideoIframe';
 
-const LivePlayer = ({
+const LivePlayer = forwardRef(({
   video,
   isMainPlayer = true,
   isMiniPlayer,
@@ -15,7 +13,7 @@ const LivePlayer = ({
   layoutMode = 'split',
   onPlayerSizeChange,
   onLayoutModeChange
-}) => {
+}, ref) => {
   const [isMuted, setIsMuted] = useState(muted);
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,7 +80,9 @@ const LivePlayer = ({
   const getContainerStyle = () => ({
     position: 'relative',
     width: '100%',
-    height: '100%',
+    aspectRatio: '16 / 9',
+    minHeight: '200px',
+    maxHeight: '100vh',
     borderRadius: playerSize === 'theater' ? '0' : '20px',
     overflow: 'hidden',
     background: '#000'
@@ -92,6 +92,7 @@ const LivePlayer = ({
 
   return (
     <div
+      ref={ref} // 👈 forwarded ref here for scroll tracking
       style={getContainerStyle()}
       onMouseEnter={() => {
         setIsHovered(true);
@@ -120,27 +121,22 @@ const LivePlayer = ({
         />
       )}
 
-      {/* Video */}
-      <VideoIframe
+      {/* Main video iframe */}
+      <iframe
         ref={iframeRef}
-        video={video}
-        playerSize={playerSize}
-        autoplay={autoplay}
-        muted={isMuted}
-        onLoad={() => setIsLoading(false)}
-        isLoading={isLoading}
+        src="https://iframes.5centscdn.in/5centscdn/hls/skin1/kygt6dlsg6zh7rmq/aHR0cHM6Ly80M3dyempucHFveGUtaGxzLWxpdmUud21uY2RuLm5ldC9HQUlQL1RWL3BsYXlsaXN0Lm0zdTg=?showcv=true&title=GAIP/TV"
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          display: 'block'
+        }}
       />
-
-      {/* Progress */}
-      {!video.isLive && isMainPlayer && (
-        <ProgressIndicator
-          progress={video.watchProgress}
-          playerSize={playerSize}
-          isVisible={video.watchProgress > 0}
-        />
-      )}
     </div>
   );
-};
+});
 
 export default LivePlayer;

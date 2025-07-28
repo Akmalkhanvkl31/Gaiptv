@@ -15,12 +15,14 @@ import {
 } from 'lucide-react';
 import AdBanner from './AdBanner';
 import LivePlayer from './LivePlayer';
+import PlayerOverlay from './PlayerOverlay';
 import styles from './Styles';
 
 const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news }) => {
   const [selectedLiveStream, setSelectedLiveStream] = useState(null);
   const [hoveredVideo, setHoveredVideo] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     // Auto-select the first live stream
@@ -169,36 +171,6 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
               marginBottom: '32px'
             }}>
               <button
-                onClick={handleWatchLive}
-                style={{
-                  padding: '16px 32px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 8px 25px rgba(239, 68, 68, 0.4)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 12px 35px rgba(239, 68, 68, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.4)';
-                }}
-              >
-                <Play size={18} fill="white" />
-                Watch Live Stream
-              </button>
-
-              <button
                 onClick={handleGetStarted}
                 style={{
                   padding: '16px 32px',
@@ -264,7 +236,40 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
           }}>
             {selectedLiveStream ? (
               isPlaying ? (
-                <LivePlayer video={selectedLiveStream} autoplay={true} />
+                <>
+                  <LivePlayer video={selectedLiveStream} autoplay={true} />
+                  <PlayerOverlay 
+                    video={selectedLiveStream}
+                    isLive={true}
+                    viewers={selectedLiveStream.viewers}
+                    showCaptions={true}
+                    showPlayerControls={false}
+                    isMainPlayer={false}
+                    playerSize="standard"
+                  />
+                  {showOverlay && (
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'rgba(0, 0, 0, 0.7)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'white',
+                      textAlign: 'center',
+                      borderRadius: '20px',
+                      zIndex: 20
+                    }}>
+                      <h2 style={{ fontSize: '24px', marginBottom: '20px' }}>Access Exclusive Content</h2>
+                      <p style={{ fontSize: '16px', marginBottom: '30px' }}>Sign in or create an account to continue watching.</p>
+                      <div style={{ display: 'flex', gap: '20px' }}>
+                        <button onClick={onSignIn} style={{ ...styles.button, background: '#8b5cf6', padding: '12px 24px' }}>Sign In</button>
+                        <button onClick={onSignUp} style={{ ...styles.button, background: 'transparent', border: '1px solid #8b5cf6', padding: '12px 24px' }}>Sign Up</button>
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 <>
                   {/* Thumbnail Preview */}
@@ -276,111 +281,6 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
                     backgroundPosition: 'center'
                   }}></div>
 
-                  {/* Live Overlay */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    left: '20px',
-                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    color: 'white',
-                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
-                    animation: 'pulse 2s infinite'
-                  }}>
-                    <div style={{
-                      width: '6px',
-                      height: '6px',
-                      backgroundColor: 'white',
-                      borderRadius: '50%',
-                      animation: 'pulse 1s infinite'
-                    }}></div>
-                    <Radio size={12} />
-                    LIVE
-                  </div>
-
-                  {/* Viewer Count */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '20px',
-                    background: 'rgba(0, 0, 0, 0.8)',
-                    padding: '6px 12px',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '12px',
-                    color: 'white',
-                    fontWeight: '500',
-                    backdropFilter: 'blur(10px)'
-                  }}>
-                    <Eye size={12} />
-                    {selectedLiveStream.viewers?.toLocaleString()}
-                  </div>
-
-                  {/* Play Button Overlay */}
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    opacity: 1,
-                    transition: 'opacity 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onClick={handleWatchLive}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.4)';
-                  }}
-                  >
-                    <div style={{
-                      padding: '24px',
-                      background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9))',
-                      borderRadius: '50%',
-                      border: '3px solid rgba(255, 255, 255, 0.3)',
-                      transition: 'all 0.3s ease',
-                      backdropFilter: 'blur(10px)'
-                    }}>
-                      <Play size={32} color="white" fill="white" />
-                    </div>
-                  </div>
-
-                  {/* Bottom Info */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    background: 'linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%)',
-                    padding: '20px',
-                    color: 'white'
-                  }}>
-                    <h4 style={{
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      marginBottom: '4px'
-                    }}>
-                      {selectedLiveStream.title}
-                    </h4>
-                    <p style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      margin: 0
-                    }}>
-                      {selectedLiveStream.speaker}
-                    </p>
-                  </div>
                 </>
               )
             ) : (
@@ -962,35 +862,6 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
               <ArrowRight size={20} />
             </button>
 
-            <button
-              onClick={handleWatchLive}
-              style={{
-                padding: '20px 40px',
-                background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                border: 'none',
-                borderRadius: '12px',
-                color: 'white',
-                fontSize: '18px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                boxShadow: '0 8px 25px rgba(239, 68, 68, 0.4)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-3px)';
-                e.target.style.boxShadow = '0 15px 40px rgba(239, 68, 68, 0.6)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.4)';
-              }}
-            >
-              <Play size={18} fill="white" />
-              Watch Live Now
-            </button>
           </div>
 
           <p style={{

@@ -1,24 +1,50 @@
 import React from 'react';
-import { Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const PlayerOverlay = ({ 
   video, 
   playerSize, 
   isMuted,
   onMuteToggle,
-  onFullscreen,
-  onMinimize,
   isLive = false,
   viewers,
   showCaptions,
   showPlayerControls,
-  isMainPlayer,
-  layoutMode,
-  onLayoutModeChange,
-  onPlayerSizeChange
+  isMiniPlayer = false,
+  isMainPlayer = true
 }) => {
-  
-  // Enhanced caption styling
+
+  if (!video) return null;
+
+  // ✅ Show only mute button in mini-player, skip the rest
+  if (isMiniPlayer) {
+    return (
+      <div style={{ 
+        position: 'absolute', 
+        top: '10px', 
+        right: '10px', 
+        zIndex: 15,
+        opacity: 1 
+      }}>
+        <button onClick={onMuteToggle} style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            color: 'white'
+        }}>
+            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
+      </div>
+    );
+  }
+
+  // 🧠 Render full overlay only for non-mini players
   const getCaptionStyle = () => {
     const sizeMultiplier = {
       compact: 0.8,
@@ -72,8 +98,6 @@ const PlayerOverlay = ({
       zIndex: 12
     };
   };
-
-  if (!video) return null;
 
   return (
     <>
@@ -158,33 +182,32 @@ const PlayerOverlay = ({
               )}
             </div>
           </div>
-          
-          {isMainPlayer && (
-            <div style={{ 
-              display: 'flex', 
-              gap: '10px',
-              position: 'absolute',
-              top: '20px',
-              right: '20px',
-              opacity: showPlayerControls ? 1 : 0,
-              transition: 'opacity 0.3s ease'
+
+          {/* Mute/Unmute Button */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px',
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            opacity: showPlayerControls ? 1 : 0,
+            transition: 'opacity 0.3s ease'
+          }}>
+            <button onClick={onMuteToggle} style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer',
+                color: 'white'
             }}>
-              <button onClick={onMuteToggle} style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  color: 'white'
-              }}>
-                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-              </button>
-            </div>
-          )}
+                {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
+          </div>
         </div>
       </div>
     </>
