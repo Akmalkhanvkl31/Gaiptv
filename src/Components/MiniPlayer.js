@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Maximize2, X, Volume2, VolumeX, Radio, AlertCircle, Minimize2 } from 'lucide-react';
 import LivePlayer from './LivePlayer';  
-import styles from './Styles';
+import './MiniPlayer.css';
 
 const MiniPlayer = ({ 
   video, 
@@ -126,112 +126,30 @@ const MiniPlayer = ({
     }
   };
 
-  // Get enhanced styling based on trigger method
-  const getMiniPlayerStyle = () => {
-    const miniSize = getMiniPlayerSize();
-    const miniPosition = getMiniPlayerPosition();
-    
-    const baseStyle = {
-      ...styles.miniPlayer,
-      ...miniSize,
-      ...miniPosition,
-      cursor: 'pointer',
-      background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(15, 15, 35, 0.9))',
-      border: isScrollBased 
-        ? '2px solid rgba(59, 130, 246, 0.6)' // Blue border for scroll-triggered
-        : '2px solid rgba(239, 68, 68, 0.6)', // Red border for manual
-      borderRadius: '16px',
-      backdropFilter: 'blur(20px)',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-    };
-
-    // Enhanced shadows based on player size
-    if (playerSize === 'cinema') {
-      baseStyle.boxShadow = isScrollBased
-        ? '0 30px 60px rgba(59, 130, 246, 0.4), 0 0 80px rgba(59, 130, 246, 0.2)'
-        : '0 30px 60px rgba(239, 68, 68, 0.4), 0 0 80px rgba(239, 68, 68, 0.2)';
-    } else if (playerSize === 'compact') {
-      baseStyle.boxShadow = isScrollBased
-        ? '0 20px 40px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1)'
-        : '0 20px 40px rgba(239, 68, 68, 0.3), 0 0 60px rgba(239, 68, 68, 0.1)';
-    } else {
-      baseStyle.boxShadow = isScrollBased
-        ? '0 25px 50px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1)'
-        : '0 25px 50px rgba(239, 68, 68, 0.3), 0 0 60px rgba(239, 68, 68, 0.1)';
-    }
-
-    return baseStyle;
-  };
-
   const miniSize = getMiniPlayerSize();
 
   return (
     <div 
-      style={getMiniPlayerStyle()}
-      className="mini-player"
+      className={`mini-player ${isScrollBased ? 'scroll-based' : 'manual'}`}
+      style={{ width: miniSize.width, aspectRatio: miniSize.aspectRatio }}
       onClick={handleClick}
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      {/* Mute/Unmute Button */}
-      <button 
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '50px',
-          padding: playerSize === 'compact' ? '6px' : '8px',
-          background: isMuted ? 'rgba(239, 68, 68, 0.8)' : 'rgba(255, 255, 255, 0.2)',
-          border: 'none',
-          borderRadius: '50%',
-          color: 'white',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 11
-        }}
-        onClick={handleMuteToggle}
-        title={isMuted ? 'Unmute Live Stream' : 'Mute Live Stream'}
-        className="mini-player-button"
-      >
-        {isMuted ? <VolumeX size={miniSize.controlSize} /> : <Volume2 size={miniSize.controlSize} />}
-      </button>
-
       {/* Close Button */}
       <button 
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          padding: playerSize === 'compact' ? '6px' : '8px',
-          background: 'rgba(239, 68, 68, 0.8)',
-          border: 'none',
-          borderRadius: '50%',
-          color: 'white',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 11
-        }}
+        className="mini-player-close-button"
         onClick={(e) => {
           e.stopPropagation();
           onClose();
         }}
         title="Close Live Stream"
-        className="mini-player-button"
       >
         <X size={miniSize.controlSize} />
       </button>
 
       {/* Video Player */}
-      <div style={{
-        aspectRatio: miniSize.aspectRatio,
-        borderRadius: '16px',
-        overflow: 'hidden'
-      }}>
+      <div className="mini-player-video">
         <LivePlayer 
           video={video} 
           isMainPlayer={false} 

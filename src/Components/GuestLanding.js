@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import AdBanner from './AdBanner';
 import LivePlayer from './LivePlayer';
-import styles from './Styles';
+import './GuestLanding.css';
 
 const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news }) => {
   const [selectedLiveStream, setSelectedLiveStream] = useState(null);
@@ -30,92 +30,36 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
   }, [liveStreams]);
 
   const handleWatchLive = () => {
-    setIsPlaying(true);
+    if (selectedLiveStream) {
+      setIsPlaying(true);
+    }
   };
 
   const handleGetStarted = () => {
-    onSignUp();
+    onSignIn();
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e, #0f172a)',
-      color: 'white',
-      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-    }}>
+    <div className="guest-landing">
       {/* Hero Section with Live Stream */}
-      <div style={{
-        position: 'relative',
-        padding: '60px 24px',
-        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05))',
-        borderBottom: '1px solid rgba(139, 92, 246, 0.2)'
-      }}>
-        <div style={{
-          maxWidth: '1400px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
-          alignItems: 'center'
-        }}>
+      <div className="hero-section">
+        <div className="hero-grid">
           {/* Left: Hero Content */}
-          <div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '24px'
-            }}>
-              <div style={{
-                padding: '8px 16px',
-                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2))',
-                borderRadius: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#ef4444',
-                border: '1px solid rgba(239, 68, 68, 0.4)'
-              }}>
-                <div style={{
-                  width: '6px',
-                  height: '6px',
-                  background: '#ef4444',
-                  borderRadius: '50%',
-                  animation: 'pulse 2s infinite'
-                }}></div>
-                <Radio size={12} />
-                LIVE NOW
-              </div>
-              <span style={{
-                fontSize: '14px',
-                color: 'rgba(255, 255, 255, 0.7)'
-              }}>
-                {selectedLiveStream?.viewers?.toLocaleString()} watching
-              </span>
+          <div className="hero-content">
+            <div className="live-now-badge">
+              <div className="live-dot"></div>
+              <Radio size={12} />
+              LIVE NOW
             </div>
+            <span className="viewers-count">
+              {selectedLiveStream?.viewers?.toLocaleString()} watching
+            </span>
 
-            <h1 style={{
-              fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: '700',
-              marginBottom: '20px',
-              background: 'linear-gradient(45deg, #8b5cf6, #3b82f6, #06b6d4)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              lineHeight: '1.1'
-            }}>
+            <h1>
               Professional Insurance Broadcasting
             </h1>
 
-            <p style={{
-              fontSize: '20px',
-              color: 'rgba(255, 255, 255, 0.8)',
-              marginBottom: '32px',
-              lineHeight: '1.6'
-            }}>
+            <p>
               Join thousands of insurance professionals watching live events, 
               accessing premium content, and staying ahead of industry trends.
             </p>
@@ -169,36 +113,6 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
               marginBottom: '32px'
             }}>
               <button
-                onClick={handleWatchLive}
-                style={{
-                  padding: '16px 32px',
-                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 8px 25px rgba(239, 68, 68, 0.4)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 12px 35px rgba(239, 68, 68, 0.5)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.4)';
-                }}
-              >
-                <Play size={18} fill="white" />
-                Watch Live Stream
-              </button>
-
-              <button
                 onClick={handleGetStarted}
                 style={{
                   padding: '16px 32px',
@@ -224,7 +138,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
                   e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.4)';
                 }}
               >
-                Get Started Free
+                Login
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -264,7 +178,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
           }}>
             {selectedLiveStream ? (
               isPlaying ? (
-                <LivePlayer video={selectedLiveStream} autoplay={true} />
+                <LivePlayer video={selectedLiveStream} autoplay={true} showOverlay={false} />
               ) : (
                 <>
                   {/* Thumbnail Preview */}
@@ -336,7 +250,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
                     transition: 'opacity 0.3s ease',
                     cursor: 'pointer'
                   }}
-                  onClick={handleWatchLive}
+                  onClick={() => setIsPlaying(true)}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = 'rgba(0, 0, 0, 0.6)';
                   }}
@@ -592,7 +506,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
         {/* CTA to See More */}
         <div style={{ textAlign: 'center' }}>
           <button
-            onClick={handleGetStarted}
+            onClick={onSignIn}
             style={{
               padding: '16px 32px',
               background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',
@@ -675,10 +589,10 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
                       background: 'rgba(255, 255, 255, 0.05)',
                       borderRadius: '12px',
                       border: '1px solid rgba(139, 92, 246, 0.2)',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onClick={handleGetStarted}
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onClick={onSignIn}
                     onMouseEnter={(e) => {
                       e.target.style.background = 'rgba(139, 92, 246, 0.1)';
                       e.target.style.transform = 'translateX(4px)';
@@ -745,7 +659,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
               </div>
 
               <button
-                onClick={handleGetStarted}
+                onClick={onSignIn}
                 style={{
                   padding: '12px 24px',
                   background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',

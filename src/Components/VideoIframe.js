@@ -235,36 +235,6 @@ const VideoIframe = forwardRef(({
         </div>
       )}
 
-      {/* Network Status Indicator */}
-      {video?.isLive && !isLoading && (
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          left: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '4px 8px',
-          background: 'rgba(0, 0, 0, 0.7)',
-          borderRadius: '12px',
-          fontSize: '10px',
-          color: 'white',
-          fontWeight: '500',
-          zIndex: 4,
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          <div style={{
-            width: '6px',
-            height: '6px',
-            background: '#22c55e',
-            borderRadius: '50%',
-            animation: 'pulse 2s infinite'
-          }}></div>
-          <span>HD</span>
-        </div>
-      )}
-
       {/* Picture-in-Picture Hint */}
       {!isLoading && video?.videoSrc && 'pictureInPictureEnabled' in document && (
         <div 
@@ -296,62 +266,7 @@ const VideoIframe = forwardRef(({
         </div>
       )}
 
-      {/* Performance Overlay (Development Only) */}
-      {process.env.NODE_ENV === 'development' && video?.videoSrc && (
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          right: '12px',
-          padding: '4px 8px',
-          background: 'rgba(0, 0, 0, 0.8)',
-          borderRadius: '8px',
-          fontSize: '9px',
-          color: 'rgba(255, 255, 255, 0.6)',
-          fontFamily: 'monospace',
-          zIndex: 4,
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          {playerSize.toUpperCase()} | {quality}
-        </div>
-      )}
-
       {/* Connection Quality Indicator */}
-      {video?.isLive && !isLoading && (
-        <div style={{
-          position: 'absolute',
-          bottom: '12px',
-          left: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          padding: '4px 8px',
-          background: 'rgba(0, 0, 0, 0.7)',
-          borderRadius: '8px',
-          fontSize: '9px',
-          color: 'rgba(255, 255, 255, 0.8)',
-          fontWeight: '500',
-          zIndex: 4,
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
-        }}>
-          {/* Connection bars */}
-          {[1, 2, 3, 4].map((bar) => (
-            <div
-              key={bar}
-              style={{
-                width: '2px',
-                height: `${bar * 2 + 2}px`,
-                background: bar <= 3 ? '#22c55e' : 'rgba(255, 255, 255, 0.3)',
-                borderRadius: '1px',
-                transition: 'background 0.3s ease'
-              }}
-            />
-          ))}
-          <span style={{ marginLeft: '4px' }}>Good</span>
-        </div>
-      )}
-
       {/* Video Title Overlay (for accessibility) */}
       {video?.title && (
         <div

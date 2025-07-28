@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import VideoCard from './VideoCard';
 import ShimmerLoading from './ShimmerLoading';
 import { Filter, SortAsc, BookmarkPlus, Eye, Clock } from 'lucide-react';
-import styles from './Styles';
+import './VideoGrid.css';
 
 const VideoGrid = ({ 
   videos, 
@@ -19,7 +19,7 @@ const VideoGrid = ({
 
   if (isLoading) {
     return (
-      <div style={styles.grid}>
+      <div className="video-grid">
         <ShimmerLoading type="card" count={4} />
       </div>
     );
@@ -90,7 +90,7 @@ const VideoGrid = ({
 
   if (filteredVideos.length === 0) {
     return (
-      <div style={styles.noResults}>
+      <div className="no-results">
         <h3>No videos found</h3>
         <p>Try adjusting your search terms or selecting a different category</p>
       </div>
@@ -101,59 +101,20 @@ const VideoGrid = ({
     <div>
       {/* Enhanced Controls for Authenticated Users */}
       {user && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '20px',
-          padding: '16px 20px',
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05))',
-          borderRadius: '12px',
-          border: '1px solid rgba(139, 92, 246, 0.2)'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px'
-          }}>
+        <div className="controls-bar">
+          <div className="controls-bar-left">
             {/* Sort Dropdown */}
-            <div style={{ position: 'relative' }}>
+            <div className="sort-dropdown">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 16px',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}
-                className="interactive-hover"
+                className="sort-button interactive-hover"
               >
                 <SortAsc size={16} />
                 Sort by: {sortBy === 'recent' ? 'Recent' : sortBy === 'popular' ? 'Popular' : 'Duration'}
               </button>
 
               {showFilters && (
-                <div style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: '0',
-                  marginTop: '8px',
-                  background: 'rgba(15, 15, 35, 0.95)',
-                  borderRadius: '8px',
-                  padding: '8px',
-                  minWidth: '160px',
-                  border: '1px solid rgba(139, 92, 246, 0.3)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)',
-                  zIndex: 10
-                }}>
+                <div className="dropdown-menu">
                   {[
                     { value: 'recent', label: 'Most Recent', icon: Clock },
                     { value: 'popular', label: 'Most Popular', icon: Eye },
@@ -164,21 +125,6 @@ const VideoGrid = ({
                       onClick={() => {
                         setSortBy(option.value);
                         setShowFilters(false);
-                      }}
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        background: sortBy === option.value ? 'rgba(139, 92, 246, 0.3)' : 'transparent',
-                        border: 'none',
-                        borderRadius: '6px',
-                        color: 'white',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        textAlign: 'left'
                       }}
                       className="dropdown-item"
                     >
@@ -191,22 +137,13 @@ const VideoGrid = ({
             </div>
 
             {/* Quick Stats */}
-            <div style={{
-              fontSize: '14px',
-              color: 'rgba(255, 255, 255, 0.7)'
-            }}>
+            <div className="quick-stats">
               {filteredVideos.length} video{filteredVideos.length !== 1 ? 's' : ''} found
             </div>
           </div>
 
           {/* Personal Stats */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            fontSize: '12px',
-            color: 'rgba(255, 255, 255, 0.6)'
-          }}>
+          <div className="personal-stats">
             <span>✨ {savedVideos.size} saved</span>
             <span>👁️ 12 watched today</span>
           </div>
@@ -215,37 +152,19 @@ const VideoGrid = ({
 
       {/* Recommended Section for Authenticated Users */}
       {user && selectedCategory === 'All' && !searchQuery && (
-        <div style={{
-          marginBottom: '24px',
-          padding: '16px',
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.02))',
-          borderRadius: '12px',
-          border: '1px solid rgba(139, 92, 246, 0.1)'
-        }}>
-          <h4 style={{
-            color: '#8b5cf6',
-            fontSize: '14px',
-            fontWeight: '600',
-            marginBottom: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+        <div className="recommended-section">
+          <h4>
             <span>⭐</span>
             Recommended for {user.role}s
           </h4>
-          <p style={{
-            color: 'rgba(255, 255, 255, 0.6)',
-            fontSize: '12px',
-            marginBottom: '0'
-          }}>
+          <p>
             Curated content based on your professional role and viewing history
           </p>
         </div>
       )}
 
       {/* Video Grid */}
-      <div style={styles.grid}>
+      <div className="video-grid">
         {filteredVideos.map((video, index) => (
           <VideoCard
             key={video.id}
@@ -262,21 +181,8 @@ const VideoGrid = ({
 
       {/* Load More Button for Large Collections */}
       {filteredVideos.length > 12 && (
-        <div style={{
-          textAlign: 'center',
-          marginTop: '32px'
-        }}>
-          <button style={{
-            padding: '12px 24px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',
-            border: '1px solid rgba(139, 92, 246, 0.3)',
-            borderRadius: '12px',
-            color: '#8b5cf6',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}>
+        <div className="load-more-button">
+          <button>
             Load More Videos
           </button>
         </div>

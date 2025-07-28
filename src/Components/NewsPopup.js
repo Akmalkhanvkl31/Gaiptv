@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, AlertCircle, TrendingUp, Clock, ExternalLink } from 'lucide-react';
-import styles from './Styles';
+import './NewsPopup.css';
 
 const NewsPopup = ({ newsItem, onClose, position }) => {
   if (!newsItem) return null;
@@ -19,11 +19,11 @@ const NewsPopup = ({ newsItem, onClose, position }) => {
   const getBadgeStyle = (type) => {
     switch (type) {
       case 'breaking':
-        return styles.newsBadgeBreaking;
+        return 'news-badge-breaking';
       case 'update':
-        return styles.newsBadgeUpdate;
+        return 'news-badge-update';
       default:
-        return styles.newsBadgeDefault;
+        return 'news-badge-default';
     }
   };
 
@@ -42,52 +42,25 @@ const NewsPopup = ({ newsItem, onClose, position }) => {
     <>
       {/* Backdrop */}
       <div 
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 99,
-          backdropFilter: 'blur(5px)'
-        }}
+        className="news-popup-backdrop"
         onClick={onClose}
       />
       
       {/* Popup Modal */}
-      <div 
-        style={{
-          ...styles.popup,
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '500px',
-          width: '90%'
-        }}
-        className="news-popup"
-      >
+      <div className="news-popup">
         {/* Header */}
-        <div style={styles.popupHeader}>
-          <div style={styles.newsDateContainer}>
+        <div className="popup-header">
+          <div className="news-date-container">
             {getNewsIcon(newsItem.type)}
-            <span style={{
-              ...styles.newsBadge, 
-              ...getBadgeStyle(newsItem.type)
-            }}>
+            <span className={`news-badge ${getBadgeStyle(newsItem.type)}`}>
               {newsItem.type.toUpperCase()}
             </span>
-            <span style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.6)',
-              marginLeft: '8px'
-            }}>
+            <span className="news-date">
               {newsItem.date}
             </span>
           </div>
           <button 
             onClick={onClose} 
-            style={styles.closeButton}
             className="close-button"
           >
             <X size={16} />
@@ -95,18 +68,16 @@ const NewsPopup = ({ newsItem, onClose, position }) => {
         </div>
 
         {/* Priority Indicator */}
-        <div style={{
-          height: '3px',
-          background: `linear-gradient(90deg, ${getPriorityColor(newsItem.type)}, transparent)`,
-          borderRadius: '2px',
-          marginBottom: '20px'
-        }} />
+        <div 
+          className="priority-indicator"
+          style={{ background: `linear-gradient(90deg, ${getPriorityColor(newsItem.type)}, transparent)` }} 
+        />
 
         {/* Title */}
-        <h4 style={styles.popupTitle}>{newsItem.title}</h4>
+        <h4 className="popup-title">{newsItem.title}</h4>
         
         {/* Content */}
-        <p style={styles.popupContent}>{newsItem.content}</p>
+        <p className="popup-content">{newsItem.content}</p>
 
         {/* Extended Content (simulated) */}
         <div style={{

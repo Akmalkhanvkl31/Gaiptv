@@ -59,7 +59,7 @@ const SettingsManager = () => {
   );
 };
 
-const AdminDashboard = ({ onClose }) => {
+const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -282,8 +282,7 @@ const AdminDashboard = ({ onClose }) => {
           <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '24px' }}>
             Administrator privileges required to access this page.
           </p>
-          <button 
-            onClick={onClose}
+          <button
             style={{
               padding: '12px 24px',
               background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
@@ -302,37 +301,16 @@ const AdminDashboard = ({ onClose }) => {
 
   return (
     <>
-      {/* Backdrop */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.9)',
-          zIndex: 9999,
-          backdropFilter: 'blur(15px)'
-        }}
-        onClick={onClose}
-      />
-      
-      {/* Admin Panel Modal */}
+      {/* Admin Panel */}
       <div style={{
-        position: 'fixed',
-        top: '2%',
-        left: '2%',
-        right: '2%',
-        bottom: '2%',
         background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.98), rgba(26, 26, 46, 0.95))',
         borderRadius: '24px',
         border: '1px solid rgba(139, 92, 246, 0.3)',
-        backdropFilter: 'blur(20px)',
         boxShadow: '0 25px 50px rgba(139, 92, 246, 0.3)',
-        zIndex: 10000,
         overflow: 'hidden',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        minHeight: '100vh'
       }}>
         {/* Header */}
         <div style={{
@@ -378,8 +356,7 @@ const AdminDashboard = ({ onClose }) => {
             </div>
           </div>
           
-          <button 
-            onClick={onClose}
+          <button
             style={{
               padding: '12px',
               background: 'rgba(239, 68, 68, 0.2)',

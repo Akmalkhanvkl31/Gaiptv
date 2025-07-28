@@ -10,12 +10,13 @@ import NewsPopup from './Components/NewsPopup';
 import AdBanner from './Components/AdBanner';
 import ShimmerLoading from './Components/ShimmerLoading';
 import mockData from './Components/mockData';
-import styles from './Components/Styles';
+import './MainApplication.css';
 import cssAnimations from './Components/cssAnimations';
 
 const MainApplication = () => {
     const {
         user,
+        profile,
         signOut,
         saveVideo,
         getSavedVideos,
@@ -28,37 +29,24 @@ const MainApplication = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showMiniPlayer, setShowMiniPlayer] = useState(false);
+    const [miniPlayerClosed, setMiniPlayerClosed] = useState(false);
+    const [lastClosedVideo, setLastClosedVideo] = useState(null);
 
     // UI state
     const [selectedNews, setSelectedNews] = useState(null);
     const [newsPosition, setNewsPosition] = useState({ x: 0, y: 0 });
 
-    // Enhanced scroll-based mini player state
-    const [scrollY, setScrollY] = useState(0);
-    const [playerInView, setPlayerInView] = useState(true);
-    const [scrollBasedMiniPlayer, setScrollBasedMiniPlayer] = useState(false);
-    const [isScrolling, setIsScrolling] = useState(false);
-    const [lastScrollDirection, setLastScrollDirection] = useState(null);
-
-    // State for managing active live stream
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
     const [activeLiveStream, setActiveLiveStream] = useState(null);
     const [liveStreamPaused, setLiveStreamPaused] = useState(false);
-    const [miniPlayerTriggered, setMiniPlayerTriggered] = useState(false);
     const [autoplayEnabled, setAutoplayEnabled] = useState(true);
     const [soundEnabled, setSoundEnabled] = useState(false);
     const [hasUserInteracted, setHasUserInteracted] = useState(false);
-
-    // User data state
     const [savedVideoIds, setSavedVideoIds] = useState(new Set());
+    const [scrollBasedMiniPlayer, setScrollBasedMiniPlayer] = useState(false);
 
-    // Refs for scroll detection
     const playerRef = useRef(null);
-    const scrollTimeoutRef = useRef(null);
-    const lastScrollY = useRef(0);
     const autoplayAttempted = useRef(false);
-    const scrollThreshold = 150;
-    const playerVisibilityThreshold = 0.3;
-
     const navigate = useNavigate();
 
     // Handle user interaction for autoplay
@@ -80,17 +68,24 @@ const MainApplication = () => {
         events.forEach(event => {
             document.addEventListener(event, handleUserInteraction, { once: true, passive: true });
         });
+
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+
+        window.addEventListener('resize', handleResize);
+
         return () => {
             events.forEach(event => {
                 document.removeEventListener(event, handleUserInteraction);
             });
+            window.removeEventListener('resize', handleResize);
         };
     }, [handleUserInteraction]);
 
     useEffect(() => {
-        const initializeUserData = async () => {
+        const initializeApp = async () => {
             if (user) {
-                console.log('User authenticated:', user.email);
                 try {
                     const savedResult = await getSavedVideos();
                     if (savedResult.success && savedResult.data) {
@@ -99,90 +94,53 @@ const MainApplication = () => {
                 } catch (error) {
                     console.error('Failed to load saved videos:', error);
                 }
+            }
 
-                if (mockData.liveStreams.length > 0) {
-                    const firstLiveStream = mockData.liveStreams[0];
-                    setCurrentVideo(firstLiveStream);
-                    setActiveLiveStream(firstLiveStream);
-                    setAutoplayEnabled(true);
-                    console.log('🔴 AUTO-STARTING LIVE STREAM:', firstLiveStream.title);
-                    autoplayAttempted.current = true;
-                }
+            if (mockData.liveStreams.length > 0) {
+                const firstLiveStream = mockData.liveStreams[0];
+                setCurrentVideo(firstLiveStream);
+                setActiveLiveStream(firstLiveStream);
+                setAutoplayEnabled(true);
+                autoplayAttempted.current = true;
             }
         };
-        initializeUserData();
+        initializeApp();
     }, [user, getSavedVideos]);
 
-    const handleScroll = useCallback(() => {
-        const currentScrollY = window.scrollY;
-        const scrollDirection = currentScrollY > lastScrollY.current ? 'down' : 'up';
-        
-        setScrollY(currentScrollY);
-        setIsScrolling(true);
-        setLastScrollDirection(scrollDirection);
-
-        if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-        }
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                const isPlayerVisible = entry.isIntersecting;
+                if (activeLiveStream && window.scrollY > 150) {
+                    if (!isPlayerVisible) {
+                        setScrollBasedMiniPlayer(true);
+                        setMiniPlayerVideo(activeLiveStream);
+                        setShowMiniPlayer(true);
+                    } else {
+                        setScrollBasedMiniPlayer(false);
+                        setShowMiniPlayer(false);
+                        setMiniPlayerVideo(null);
+                    }
+                }
+            },
+            { threshold: 0.3 }
+        );
 
         if (playerRef.current) {
-            const rect = playerRef.current.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            
-            const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-            const playerHeight = rect.height;
-            const visibilityRatio = Math.max(0, visibleHeight) / playerHeight;
-            
-            const isPlayerVisible = visibilityRatio >= playerVisibilityThreshold;
-            setPlayerInView(isPlayerVisible);
-
-            if (activeLiveStream && !miniPlayerTriggered) {
-                if (scrollDirection === 'down' && currentScrollY > scrollThreshold && !isPlayerVisible) {
-                    console.log('🔴 Auto-triggering mini player for live stream');
-                    setScrollBasedMiniPlayer(true);
-                    setMiniPlayerVideo(activeLiveStream);
-                    setShowMiniPlayer(true);
-                    setMiniPlayerTriggered(true);
-                }
-            } 
-            
-            if (scrollBasedMiniPlayer && scrollDirection === 'up' && isPlayerVisible) {
-                console.log('🔴 Hiding mini player - player back in view');
-                setScrollBasedMiniPlayer(false);
-                setShowMiniPlayer(false);
-                setMiniPlayerVideo(null);
-                setMiniPlayerTriggered(false);
-            }
+            observer.observe(playerRef.current);
         }
 
-        scrollTimeoutRef.current = setTimeout(() => {
-            setIsScrolling(false);
-        }, 100);
-
-        lastScrollY.current = currentScrollY;
-    }, [activeLiveStream, scrollBasedMiniPlayer, scrollThreshold, playerVisibilityThreshold, miniPlayerTriggered]);
-
-    const throttledScrollHandler = useCallback(() => {
-        requestAnimationFrame(handleScroll);
-    }, [handleScroll]);
-
-    useEffect(() => {
-        const options = { passive: true };
-        window.addEventListener('scroll', throttledScrollHandler, options);
         return () => {
-            window.removeEventListener('scroll', throttledScrollHandler);
-            if (scrollTimeoutRef.current) {
-                clearTimeout(scrollTimeoutRef.current);
+            if (playerRef.current) {
+                observer.unobserve(playerRef.current);
             }
         };
-    }, [throttledScrollHandler]);
+    }, [activeLiveStream]);
 
     const handleVideoSelect = async (video) => {
-        console.log('🎥 Video selected:', video.title, 'isLive:', video.isLive);
         handleUserInteraction();
         setScrollBasedMiniPlayer(false);
-        setMiniPlayerTriggered(false);
-        
+
         if (video.isLive) {
             setCurrentVideo(video);
             setActiveLiveStream(video);
@@ -195,20 +153,15 @@ const MainApplication = () => {
             if (activeLiveStream) {
                 setMiniPlayerVideo(activeLiveStream);
                 setShowMiniPlayer(true);
-                setCurrentVideo(video);
-                setLiveStreamPaused(false);
-            } else {
-                setCurrentVideo(video);
-                setShowMiniPlayer(false);
-                setMiniPlayerVideo(null);
             }
-            
-            if (user) {
-                try {
-                    await updateWatchProgress(video.id, 0, 0);
-                } catch (error) {
-                    console.error('Failed to track video selection:', error);
-                }
+            setCurrentVideo(video);
+        }
+
+        if (user && !video.isLive) {
+            try {
+                await updateWatchProgress(video.id, 0, 0);
+            } catch (error) {
+                console.error('Failed to track video selection:', error);
             }
         }
 
@@ -235,17 +188,8 @@ const MainApplication = () => {
     };
 
     const handleMaximizeMiniPlayer = () => {
-        if (miniPlayerVideo && miniPlayerVideo.isLive) {
-            setCurrentVideo(miniPlayerVideo);
-            setActiveLiveStream(miniPlayerVideo);
-            setMiniPlayerVideo(null);
-            setShowMiniPlayer(false);
-            setScrollBasedMiniPlayer(false);
-            setMiniPlayerTriggered(false);
-            setLiveStreamPaused(false);
-            setAutoplayEnabled(true);
-            setSoundEnabled(hasUserInteracted);
-            
+        if (miniPlayerVideo?.isLive) {
+            handleVideoSelect(miniPlayerVideo);
             if (playerRef.current) {
                 playerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -254,22 +198,31 @@ const MainApplication = () => {
 
     const handleCloseMiniPlayer = () => {
         setShowMiniPlayer(false);
+        setLastClosedVideo(miniPlayerVideo);
         setMiniPlayerVideo(null);
         setScrollBasedMiniPlayer(false);
-        setMiniPlayerTriggered(false);
         setActiveLiveStream(null);
         setLiveStreamPaused(true);
+        setMiniPlayerClosed(true);
+    };
+
+    const handleReopenMiniPlayer = () => {
+        if (lastClosedVideo) {
+            setMiniPlayerVideo(lastClosedVideo);
+            setActiveLiveStream(lastClosedVideo);
+            setShowMiniPlayer(true);
+            setMiniPlayerClosed(false);
+            setLiveStreamPaused(false);
+            setAutoplayEnabled(true);
+        }
     };
 
     const handleMinimizePlayer = () => {
-        if (currentVideo && currentVideo.isLive) {
+        if (currentVideo?.isLive) {
             setMiniPlayerVideo(currentVideo);
-            setActiveLiveStream(currentVideo);
             setShowMiniPlayer(true);
             setScrollBasedMiniPlayer(false);
-            setMiniPlayerTriggered(true);
             setCurrentVideo(null);
-            setLiveStreamPaused(false);
         }
     };
 
@@ -309,7 +262,7 @@ const MainApplication = () => {
     const handleLogout = async () => {
         try {
             await signOut();
-            navigate('/guest');
+            navigate('/');
         } catch (error) {
             console.error('Logout error:', error);
         }
@@ -318,7 +271,7 @@ const MainApplication = () => {
     const allVideos = [...mockData.liveStreams, ...mockData.featuredVideos];
 
     return (
-        <div style={styles.container}>
+        <div className="main-application">
             <style>{cssAnimations}</style>
             
             <Header
@@ -326,6 +279,7 @@ const MainApplication = () => {
                 onCategoryChange={handleCategoryChange}
                 selectedCategory={selectedCategory}
                 user={user}
+                profile={profile}
                 onLogout={handleLogout}
                 onShowAuth={() => navigate('/auth')}
                 onShowAbout={() => navigate('/about')}
@@ -336,46 +290,11 @@ const MainApplication = () => {
                 liveStreamPaused={liveStreamPaused}
             />
 
-            {user?.user_metadata?.role === 'Admin' && (
-                <button onClick={() => navigate('/admin')} style={{ position: 'fixed', bottom: '20px', right: '20px', padding: '12px 24px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: 'none', borderRadius: '8px', color: 'white', cursor: 'pointer', zIndex: 1001, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-                    Admin Panel
-                </button>
-            )}
-
-            <div style={{
-                display: 'flex',
-                gap: '24px',
-                padding: '24px',
-                maxWidth: '100%',
-                margin: '0',
-                minHeight: 'calc(100vh - 64px)',
-                transition: 'all 0.5s ease'
-            }}>
-                <div style={{
-                    flex: '1',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '24px',
-                    overflow: 'hidden'
-                }}>
+            <div className="main-content">
+                <div className="content-area">
                     <div 
                         ref={playerRef} 
-                        style={{
-                            position: 'relative',
-                            width: '100%',
-                            background: '#000',
-                            overflow: 'hidden',
-                            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                            borderRadius: '20px',
-                            boxShadow: activeLiveStream ? 
-                                '0 0 50px rgba(239, 68, 68, 0.4), 0 0 100px rgba(239, 68, 68, 0.2)' :
-                                '0 0 50px rgba(139, 92, 246, 0.4), 0 0 100px rgba(59, 130, 246, 0.2)',
-                            border: activeLiveStream ? 
-                                '2px solid rgba(239, 68, 68, 0.4)' :
-                                '1px solid rgba(139, 92, 246, 0.3)',
-                            marginTop: '24px',
-                            height: 'clamp(500px, 75vh, 900px)'
-                        }}
+                        className={`player-container ${activeLiveStream ? 'live' : 'vod'}`}
                     >
                         {currentVideo ? (
                             <LivePlayer 
@@ -389,41 +308,11 @@ const MainApplication = () => {
                                 playerSize="cinema"
                             />
                         ) : (
-                            <div style={styles.loading}>
+                            <div className="loading-player">
                                 <ShimmerLoading type="player" />
                             </div>
                         )}
 
-                        {currentVideo?.isLive && autoplayEnabled && (
-                            <div style={{
-                                position: 'absolute',
-                                top: '20px',
-                                right: '20px',
-                                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.8))',
-                                padding: '8px 16px',
-                                borderRadius: '20px',
-                                fontSize: '12px',
-                                fontWeight: '700',
-                                color: 'white',
-                                zIndex: 15,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                                backdropFilter: 'blur(10px)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.5)'
-                            }}>
-                                <div style={{
-                                    width: '6px',
-                                    height: '6px',
-                                    background: 'white',
-                                    borderRadius: '50%',
-                                    animation: 'pulse 1s infinite'
-                                }}></div>
-                                <span>AUTO-PLAY LIVE</span>
-                                {soundEnabled && <span>🔊</span>}
-                            </div>
-                        )}
                     </div>
 
                     <AdBanner 
@@ -431,20 +320,14 @@ const MainApplication = () => {
                         position="below-player"
                     />
 
-                    <div style={styles.videoGrid}>
-                        <div style={styles.sectionHeader}>
-                            <h2 style={styles.sectionTitle}>
+                    <div className="video-grid-container">
+                        <div className="section-header">
+                            <h2 className="section-title">
                                 {selectedCategory === 'All' ? 'Featured Videos' : selectedCategory}
                             </h2>
                             {mockData.liveStreams.length > 0 && (
-                                <div style={styles.liveIndicator}>
-                                    <div style={{
-                                        width: '8px',
-                                        height: '8px',
-                                        background: '#ef4444',
-                                        borderRadius: '50%',
-                                        animation: 'pulse 2s infinite'
-                                    }}></div>
+                                <div className="live-indicator-main">
+                                    <div className="dot"></div>
                                     <span>Live Now: {mockData.liveStreams[0].title}</span>
                                 </div>
                             )}
@@ -465,34 +348,37 @@ const MainApplication = () => {
                     </div>
                 </div>
 
-                <div style={{
-                    width: '400px',
-                    background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(26, 26, 46, 0.9))',
-                    borderLeft: '1px solid rgba(139, 92, 246, 0.2)',
-                    borderRadius: '16px',
-                    height: '100%',
-                    overflow: 'auto',
-                    boxShadow: '0 0 30px rgba(139, 92, 246, 0.1)',
-                    flexShrink: 0,
-                    transition: 'all 0.5s ease'
-                }}>
-                    <Sidebar
-                        news={mockData.news}
-                        onNewsClick={handleNewsClick}
-                        user={user}
-                        activeLiveStream={activeLiveStream}
-                    />
-                    
-                    <AdBanner 
-                        user={user}
-                        position="sidebar"
-                    />
-                </div>
+                {!isMobile && (
+                    <div className="sidebar-container">
+                        <Sidebar
+                            news={mockData.news}
+                            onNewsClick={handleNewsClick}
+                            user={user}
+                            activeLiveStream={activeLiveStream}
+                        />
+                        
+                        <AdBanner 
+                            user={user}
+                            position="sidebar"
+                        />
+                    </div>
+                )}
             </div>
 
             {showMiniPlayer && miniPlayerVideo && miniPlayerVideo.isLive && !liveStreamPaused && (
                 <MiniPlayer video={miniPlayerVideo} onClose={handleCloseMiniPlayer} onMaximize={handleMaximizeMiniPlayer} autoplay={true} muted={scrollBasedMiniPlayer} isScrollBased={scrollBasedMiniPlayer} position="bottom-right" isActiveStream={miniPlayerVideo.id === activeLiveStream?.id} />
             )}
+
+            {miniPlayerClosed && (
+                <button
+                    onClick={handleReopenMiniPlayer}
+                    className="reopen-mini-player-button"
+                    title="Reopen Mini Player"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 3-6.5 6.5a.9.9 0 0 0 0 1.3L15 17.5V21l-10-10L15 3z"/></svg>
+                </button>
+            )}
+
             {selectedNews && <NewsPopup newsItem={selectedNews} onClose={handleCloseNews} position={newsPosition} />}
         </div>
     );

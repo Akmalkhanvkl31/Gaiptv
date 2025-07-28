@@ -1,5 +1,6 @@
 // AuthContext.js - React Context for Authentication State
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authHelpers, dbHelpers, subscriptions } from './Supabase'; 
 
 const AuthContext = createContext({});
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   // Initialize auth state
   useEffect(() => {
@@ -53,24 +55,49 @@ export const AuthProvider = ({ children }) => {
     const { data: { subscription } } = subscriptions.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session);
-        
+        setLoading(true);
+
         if (event === 'SIGNED_IN' && session?.user) {
-          setUser(session.user);
+          const currentUser = session.user;
+          setUser(currentUser);
           setIsAuthenticated(true);
-          
-          // Get or create profile
-          const { data: userProfile } = await dbHelpers.getUserProfile(session.user.id);
-          if (userProfile) {
-            setProfile(userProfile);
-          } else {
-            await dbHelpers.createUserProfile(session.user);
-            const { data: newProfile } = await dbHelpers.getUserProfile(session.user.id);
-            setProfile(newProfile);
+
+          // Check for admin profile first
+          const { data: adminProfile, error: adminError } = await dbHelpers.getAdminProfile(currentUser.id);
+
+          if (adminProfile) {
+            setProfile(adminProfile);
+            if (adminProfile.role === 'admin') {
+              navigate('/admin');
+            } else {
+              // Has an admin table entry but not admin role, sign out for security.
+              await authHelpers.signOut();
+            }
+          } else if (adminError) {
+            // An actual error occurred fetching admin profile
+            console.error("Error fetching admin profile:", adminError);
+            await authHelpers.signOut();
+          }
+          else {
+            // Not an admin, proceed with normal user profile
+            const { data: userProfile } = await dbHelpers.getUserProfile(currentUser.id);
+            if (userProfile) {
+              setProfile(userProfile);
+            } else {
+              // Create profile if it doesn't exist
+              await dbHelpers.createUserProfile(currentUser);
+              const { data: newProfile } = await dbHelpers.getUserProfile(currentUser.id);
+              setProfile(newProfile);
+            }
+            // For regular users, you might navigate them to a dashboard
+            navigate('/');
           }
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setProfile(null);
           setIsAuthenticated(false);
+          // Optionally navigate to login on sign out
+          // navigate('/login');
         }
         
         setLoading(false);
@@ -81,46 +108,44 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Auth methods
-  const signUp = async (email, password, userData) => {
+  const signIn = async (email, password) => {
     setLoading(true);
     try {
-      const { data, error } = await authHelpers.signUp(email, password, userData);
-      if (error) throw new Error(error);
-      
-      return { success: true, data };
+      const { data, error } = await authHelpers.signIn(email, password);
+      if (error) {
+        // The listener won't fire on error, so we can return failure here.
+        return { success: false, error: error.message };
+      }
+      // On success, the onAuthStateChange listener will handle profile fetching and navigation.
+      // We return a pending success state to the UI.
+      return { success: true, user: data.user };
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error("Sign in error:", error);
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
     }
   };
 
-  const signIn = async (email, password) => {
+  const signUp = async (email, password, userData) => {
     setLoading(true);
     try {
-      const { data, error } = await authHelpers.signIn(email, password);
+      const { data, error } = await authHelpers.signUp(email, password, userData);
       if (error) throw new Error(error.message);
       if (data.user) {
         setUser(data.user);
         setIsAuthenticated(true);
+        // The profile is created via a trigger in Supabase,
+        // but we can fetch it here to be sure.
         const { data: userProfile } = await dbHelpers.getUserProfile(
           data.user.id
         );
-        if (userProfile) {
-          setProfile(userProfile);
-        } else {
-          await dbHelpers.createUserProfile(data.user);
-          const { data: newProfile } = await dbHelpers.getUserProfile(
-            data.user.id
-          );
-          setProfile(newProfile);
-        }
-        return { success: true, user: data.user };
+        setProfile(userProfile);
+        return { success: true, user: data.user, role: userProfile?.role };
       }
       return { success: true, data };
     } catch (error) {
-      console.error("Sign in error:", error);
+      console.error("Sign up error:", error);
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -247,6 +272,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   const getUserAnalytics = async () => {
     if (!user) return { success: false, error: 'User not authenticated' };
     
@@ -269,8 +295,8 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     
     // Auth methods
-    signUp,
     signIn,
+    signUp,
     signInWithMagicLink,
     signInWithOAuth,
     signOut,

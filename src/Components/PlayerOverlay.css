@@ -1,0 +1,124 @@
+.player-overlay {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 15, 35, 0.8));
+  padding: 20px;
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.player-overlay.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.viewer-info {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(15, 15, 35, 0.7));
+  padding: 10px 14px;
+  border-radius: 25px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 12;
+}
+
+.viewer-info.show {
+  opacity: 1;
+}
+
+.live-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.player-overlay-content h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.player-overlay-content p {
+  font-size: 30px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  line-height: 1.5;
+}
+
+.video-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  flex-wrap: wrap;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(239, 68, 68, 0.8);
+  border-radius: 15px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.player-controls {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.player-controls.show {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .player-overlay {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    padding: 15px;
+  }
+
+  .viewer-info {
+    top: 60px;
+    right: 10px;
+    padding: 8px 12px;
+  }
+}
