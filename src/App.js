@@ -14,13 +14,8 @@ const App = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignUp = () => {
-    navigate('/auth?form=signup');
-  };
-
-  const handleSignIn = () => {
-    navigate('/auth?form=signin');
-  };
+  const handleSignUp = () => navigate('/auth?form=signup');
+  const handleSignIn = () => navigate('/auth?form=signin');
 
   if (loading) {
     return <div>Loading...</div>;
@@ -28,8 +23,13 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/auth" element={<AuthScreen onSignUp={handleSignUp} />} />
+      {/* 🔐 Auth page */}
+      <Route path="/auth" element={<AuthScreen />} />
+
+      {/* 📄 About Page */}
       <Route path="/about" element={<About />} />
+
+      {/* 👤 Admin Access */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route 
         path="/admin" 
@@ -39,6 +39,8 @@ const App = () => {
           </AdminRoute>
         } 
       />
+
+      {/* 👥 Guest Landing Page */}
       <Route 
         path="/" 
         element={
@@ -46,18 +48,22 @@ const App = () => {
             <Navigate to="/home" />
           ) : (
             <GuestLanding 
-              onSignIn={handleSignIn}
-              onSignUp={handleSignUp}
               liveStreams={mockData.liveStreams} 
               featuredVideos={mockData.featuredVideos}
               news={mockData.news}
+              onSignIn={handleSignIn}
+              onSignUp={handleSignUp}
             />
           )
         } 
       />
+
+      {/* 🏠 Home/Main Application for logged in users */}
       <Route 
         path="/home" 
-        element={user ? <MainApplication /> : <Navigate to="/auth" />} 
+        element={
+          user ? <MainApplication /> : <Navigate to="/auth?form=signin" />
+        } 
       />
     </Routes>
   );

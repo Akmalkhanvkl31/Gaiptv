@@ -11,14 +11,15 @@ const MainApplication = () => {
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
   const [miniPlayerVideo, setMiniPlayerVideo] = useState(null);
 
-  const playerRef = useRef(null);
+  const playerContainerRef = useRef(null);
 
-  // 👇 Scroll logic to detect when main player is out of view
+  // ✅ Updated scroll logic to detect partial visibility
   const handleScroll = useCallback(() => {
-    if (playerRef.current) {
-      const rect = playerRef.current.getBoundingClientRect();
-      const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
-      if (!isVisible && currentVideo) {
+    if (playerContainerRef.current) {
+      const rect = playerContainerRef.current.getBoundingClientRect();
+      const isMostlyVisible = rect.top < window.innerHeight && rect.bottom > 150;
+
+      if (!isMostlyVisible && currentVideo) {
         setMiniPlayerVideo(currentVideo);
         setShowMiniPlayer(true);
       } else {
@@ -36,8 +37,8 @@ const MainApplication = () => {
     <div style={{ backgroundColor: '#111827', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
 
-      {/* Video Player (not sticky now) */}
-      <div ref={playerRef}>
+      {/* Main Player */}
+      <div ref={playerContainerRef}>
         <LivePlayer
           video={currentVideo}
           isMainPlayer={true}
@@ -49,7 +50,21 @@ const MainApplication = () => {
         />
       </div>
 
-      {/* Content below the video */}
+      {/* Video Details */}
+      <div style={{
+        color: 'white',
+        padding: '16px 24px',
+        backgroundColor: '#1f2937',
+        borderBottom: '1px solid #374151'
+      }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>{currentVideo.title}</h2>
+        <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '6px' }}>{currentVideo.description}</p>
+        <div style={{ fontSize: '13px', color: '#ccc' }}>
+          {currentVideo.speaker} • {currentVideo.views?.toLocaleString()} views • {currentVideo.uploadDate}
+        </div>
+      </div>
+
+      {/* Content Grid */}
       <div style={{ display: 'flex', flexWrap: 'wrap', padding: '20px', gap: '20px', width: '100%' }}>
         <div style={{ flex: '1 1 0%', minWidth: '300px' }}>
           <VideoGrid
@@ -70,14 +85,16 @@ const MainApplication = () => {
         </div>
       </div>
 
-      {/* 🎬 Mini Player Triggered on Scroll */}
+      {/* MiniPlayer */}
       {showMiniPlayer && miniPlayerVideo && (
         <MiniPlayer
           video={miniPlayerVideo}
           onClose={() => setShowMiniPlayer(false)}
           onMaximize={() => {
             setShowMiniPlayer(false);
-            if (playerRef.current) playerRef.current.scrollIntoView({ behavior: 'smooth' });
+            if (playerContainerRef.current) {
+              playerContainerRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
           }}
           autoplay={true}
           muted={true}

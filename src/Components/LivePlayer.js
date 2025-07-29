@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef } from 'react';
-import PlayerOverlay from './PlayerOverlay';
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 
 const LivePlayer = forwardRef(({
   video,
@@ -15,57 +14,11 @@ const LivePlayer = forwardRef(({
   onLayoutModeChange
 }, ref) => {
   const [isMuted, setIsMuted] = useState(muted);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCaptions, setShowCaptions] = useState(true);
-  const [showPlayerControls, setShowPlayerControls] = useState(true);
-  const [controlsHideTimeout, setControlsHideTimeout] = useState(null);
-
   const iframeRef = useRef(null);
-  const captionTimerRef = useRef(null);
 
   useEffect(() => {
     setIsMuted(muted);
   }, [muted]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, [video]);
-
-  useEffect(() => {
-    if (isMainPlayer && showCaptions) {
-      clearTimeout(captionTimerRef.current);
-      const timeout = setTimeout(() => setShowCaptions(false),
-        playerSize === 'compact' ? 3000 :
-        playerSize === 'cinema' ? 7000 : 5000
-      );
-      captionTimerRef.current = timeout;
-    }
-    return () => clearTimeout(captionTimerRef.current);
-  }, [isMainPlayer, showCaptions, video, playerSize]);
-
-  useEffect(() => {
-    if (video && isMainPlayer) {
-      setShowPlayerControls(true);
-      const timeout = setTimeout(() => setShowPlayerControls(false), 5000);
-      setControlsHideTimeout(timeout);
-    }
-    return () => clearTimeout(controlsHideTimeout);
-  }, [video, isMainPlayer]);
-
-  useEffect(() => {
-    if (isHovered && isMainPlayer) {
-      setShowCaptions(true);
-    }
-  }, [isHovered, isMainPlayer]);
-
-  const handleShowControls = () => {
-    setShowPlayerControls(true);
-    clearTimeout(controlsHideTimeout);
-    const timeout = setTimeout(() => setShowPlayerControls(false), 3000);
-    setControlsHideTimeout(timeout);
-  };
 
   const handleMuteToggle = () => {
     const newMuted = !isMuted;
@@ -74,7 +27,9 @@ const LivePlayer = forwardRef(({
   };
 
   const handleFullscreen = () => {
-    if (iframeRef.current?.requestFullscreen) iframeRef.current.requestFullscreen();
+    if (iframeRef.current?.requestFullscreen) {
+      iframeRef.current.requestFullscreen();
+    }
   };
 
   const getContainerStyle = () => ({
@@ -85,42 +40,16 @@ const LivePlayer = forwardRef(({
     maxHeight: '100vh',
     borderRadius: playerSize === 'theater' ? '0' : '20px',
     overflow: 'hidden',
-    background: '#000'
+    background: '#000',
   });
 
   if (!video) return null;
 
   return (
     <div
-      ref={ref} // 👈 forwarded ref here for scroll tracking
+      ref={ref} // 👈 forwarded ref for scroll tracking
       style={getContainerStyle()}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        handleShowControls();
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={handleShowControls}
     >
-      {/* Overlay - shown only if not in mini player mode */}
-      {!isMiniPlayer && (
-        <PlayerOverlay
-          video={video}
-          isMuted={isMuted}
-          isHovered={isHovered}
-          showCaptions={showCaptions}
-          showPlayerControls={showPlayerControls}
-          onMuteToggle={handleMuteToggle}
-          onFullscreen={handleFullscreen}
-          onMinimize={onMinimize}
-          playerSize={playerSize}
-          layoutMode={layoutMode}
-          onPlayerSizeChange={onPlayerSizeChange}
-          onLayoutModeChange={onLayoutModeChange}
-          isMainPlayer={isMainPlayer}
-          isMiniPlayer={false}
-        />
-      )}
-
       {/* Main video iframe */}
       <iframe
         ref={iframeRef}
@@ -132,7 +61,7 @@ const LivePlayer = forwardRef(({
           width: '100%',
           height: '100%',
           border: 'none',
-          display: 'block'
+          display: 'block',
         }}
       />
     </div>
