@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import PlayerOverlay from './PlayerOverlay';
 import ProgressIndicator from './ProgressIndicator';
 import VideoIframe from './VideoIframe';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const LivePlayer = ({
   video,
   isMainPlayer = true,
   isMiniPlayer,
+  showOverlay = true,
   muted = false,
   onMuteToggle,
   autoplay = false,
@@ -24,6 +26,7 @@ const LivePlayer = ({
   const [controlsHideTimeout, setControlsHideTimeout] = useState(null);
 
   const iframeRef = useRef(null);
+  const playerContainerRef = useRef(null);
   const captionTimerRef = useRef(null);
 
   useEffect(() => {
@@ -69,14 +72,17 @@ const LivePlayer = ({
     setControlsHideTimeout(timeout);
   };
 
-  const handleMuteToggle = () => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    if (onMuteToggle) onMuteToggle(newMuted);
-  };
+  
 
   const handleFullscreen = () => {
     if (iframeRef.current?.requestFullscreen) iframeRef.current.requestFullscreen();
+  };
+
+  const handleMuteToggle = () => {
+    setIsMuted(!isMuted);
+    if (onMuteToggle) {
+      onMuteToggle(!isMuted);
+    }
   };
 
   const getContainerStyle = () => ({
@@ -92,6 +98,7 @@ const LivePlayer = ({
 
   return (
     <div
+      ref={playerContainerRef}
       style={getContainerStyle()}
       onMouseEnter={() => {
         setIsHovered(true);
@@ -100,15 +107,15 @@ const LivePlayer = ({
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleShowControls}
     >
+        
       {/* Overlay - shown only if not in mini player mode */}
-      {!isMiniPlayer && (
+      {showOverlay && !isMiniPlayer && (
         <PlayerOverlay
           video={video}
           isMuted={isMuted}
           isHovered={isHovered}
           showCaptions={showCaptions}
           showPlayerControls={showPlayerControls}
-          onMuteToggle={handleMuteToggle}
           onFullscreen={handleFullscreen}
           onMinimize={onMinimize}
           playerSize={playerSize}
@@ -119,6 +126,8 @@ const LivePlayer = ({
           isMiniPlayer={false}
         />
       )}
+
+      
 
       {/* Video */}
       <VideoIframe

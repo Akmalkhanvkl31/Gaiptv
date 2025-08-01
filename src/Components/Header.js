@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Search, 
   Bell, 
@@ -8,31 +9,35 @@ import {
   Archive,
   ExternalLink,
   Info,
-  ChevronDown
+  ChevronDown,
+  Menu
 } from 'lucide-react';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import AdminRoute from './AdminRoute';
-
+import './Header.css';
 import logo from "../Assets/GaipLogo.png"; 
 
-const Header = ({ 
-  onSearch, 
-  onCategoryChange, 
-  selectedCategory, 
-  user, 
-  onLogout, 
+const Header = ({
+  onSearch,
+  onCategoryChange,
+  selectedCategory,
+  user,
+  profile,
+  onLogout,
   onShowAuth,
   onShowAbout,
   isGuestMode = false,
   currentVideo
 }) => {
-  const { isAdmin } = useAdminAuth();
+  const isAdmin = profile?.role === 'admin';
   const [showAdmin, setShowAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('GAIP');
   const [isGaipDropdownOpen, setIsGaipDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -67,6 +72,15 @@ const Header = ({
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleAboutClick = () => {
     setActiveTab('About');
     onShowAbout();
@@ -92,101 +106,28 @@ const Header = ({
   ];
 
   return (
-    <header style={{
-      background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(31, 41, 55, 0.95))',
-      backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid rgba(75, 85, 99, 0.3)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000,
-      padding: '0',
-      height: '64px',
-      width: '100%'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        height: '100%',
-        padding: '0 24px'
-      }}>
+    <header className="header">
+      <div className="header-content">
         
         {/* Logo Section - Left */}
         <div 
           onClick={handleLogoClick}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            padding: '8px 12px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1))',
-            border: '1px solid rgba(139, 92, 246, 0.2)',
-            transition: 'all 0.3s ease',
-            minWidth: '140px'
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(59, 130, 246, 0.15)';
-            e.target.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1)';
-            e.target.style.transform = 'translateY(0)';
-          }}
+          className="logo-section"
         >
           {/* Logo Icon */}
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
-          }}>
-            <img src={logo} alt="GAIP Logo" style={{ width: '24px', height: '24px', borderRadius: '4px' }} />
+          <div className="logo-icon">
+            <img src={logo} alt="GAIP Logo" />
           </div>
           
           {/* Logo Text */}
-          <div>
-            <h1 style={{
-              color: 'white',
-              fontSize: '18px',
-              fontWeight: '700',
-              margin: 0,
-              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-              letterSpacing: '-0.025em'
-            }}>
-              GAIPTV
-            </h1>
-            <p style={{
-              color: 'rgba(156, 163, 175, 0.8)',
-              fontSize: '11px',
-              margin: 0,
-              fontWeight: '500',
-              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
-            }}>
-              Professional Broadcasting
-            </p>
+          <div className="logo-text">
+            <h1>GAIPTV</h1>
+            <p>Professional Broadcasting</p>
           </div>
         </div>
 
         {/* Navigation Tabs - Center */}
-        <nav style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          background: 'rgba(17, 24, 39, 0.5)',
-          borderRadius: '12px',
-          padding: '6px',
-          border: '1px solid rgba(75, 85, 99, 0.3)'
-        }}>
+        <nav className="navigation-tabs">
           
           {/* GAIP Tab with Dropdown */}
           <div style={{ position: 'relative' }}>
@@ -382,78 +323,26 @@ const Header = ({
         </nav>
 
         {/* Right Side Controls */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
+        <div className="right-controls">
+          {isMobile && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="mobile-menu-button"
+            >
+              <Menu size={24} />
+            </button>
+          )}
           
           {/* Search Input */}
-          <div style={{
-            position: 'relative',
-            background: 'rgba(17, 24, 39, 0.6)',
-            borderRadius: '10px',
-            border: '1px solid rgba(75, 85, 99, 0.4)',
-            overflow: 'hidden',
-            transition: 'all 0.3s ease'
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(139, 92, 246, 0.5)';
-            e.currentTarget.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.1)';
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(75, 85, 99, 0.4)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-          >
+          <div className="search-input">
             <input
               type="text"
               placeholder="Search videos, events, archive..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleSearchKeyPress}
-              style={{
-                width: '280px',
-                padding: '10px 16px 10px 16px',
-                fontSize: '14px',
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                color: 'white',
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                '::placeholder': {
-                  color: 'rgba(156, 163, 175, 0.7)'
-                }
-              }}
             />
-            <button
-              onClick={() => onSearch(searchQuery)}
-              style={{
-                position: 'absolute',
-                right: '6px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                padding: '8px',
-                background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                border: 'none',
-                borderRadius: '6px',
-                color: 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-50%) scale(1.05)';
-                e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(-50%) scale(1)';
-                e.target.style.boxShadow = '0 2px 8px rgba(139, 92, 246, 0.3)';
-              }}
-            >
+            <button onClick={() => onSearch(searchQuery)}>
               <Search size={16} />
             </button>
           </div>
@@ -770,8 +659,8 @@ const Header = ({
                     ))}
 
                     {isAdmin && (
-                      <button
-                        onClick={() => setShowAdmin(true)}
+                      <Link
+                        to="/admin"
                         style={{
                           width: '100%',
                           padding: '12px 16px',
@@ -787,12 +676,13 @@ const Header = ({
                           alignItems: 'center',
                           gap: '10px',
                           textAlign: 'left',
-                          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+                          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                          textDecoration: 'none'
                         }}
                       >
                         <Settings size={16} />
                         <span>Admin Panel</span>
-                      </button>
+                      </Link>
                     )}
                     
                     <hr style={{ 

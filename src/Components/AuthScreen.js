@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Mail, 
   Lock, 
@@ -17,10 +18,11 @@ import {
   Star
 } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import styles from './Styles';
+import './AuthScreen.css';
 
 const AuthScreen = ({ onClose, isOverlay = false }) => {
   const { signIn, signUp, signInWithMagicLink, signInWithOAuth, loading } = useAuth();
+  const navigate = useNavigate();
   
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -71,9 +73,7 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
       if (!formData.name) {
         newErrors.name = 'Name is required';
       }
-      if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Please confirm your password';
-      } else if (formData.password !== formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = 'Passwords do not match';
       }
     }
@@ -91,35 +91,50 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
     setErrors({});
     setSuccessMessage('');
 
-    try {
-      if (isLoginMode) {
+    if (isLoginMode) {
+      try {
         const result = await signIn(formData.email, formData.password);
-        if (!result.success) {
-          setErrors({ general: result.error });
+        if (result.success) {
+          if (result.role === 'admin') {
+            // Admin redirection is handled by AuthContext, just close the modal
+            if (onClose) onClose();
+          } else {
+            setSuccessMessage('Welcome back! Redirecting...');
+            setTimeout(() => {
+              if (onClose) onClose();
+              navigate('/main');
+            }, 1500);
+          }
         } else {
-          setSuccessMessage('Welcome back! Redirecting...');
-          setTimeout(() => {
-            onClose();
-          }, 1500);
-        }
-      } else {
-        const userData = {
-          name: formData.name,
-          role: formData.role,
-          company: formData.company
-        };
-        
-        const result = await signUp(formData.email, formData.password, userData);
-        if (!result.success) {
           setErrors({ general: result.error });
-        } else {
-          setSuccessMessage('Account created! Please check your email to verify your account.');
         }
+      } catch (error) {
+        setErrors({ general: 'An unexpected error occurred. Please try again.' });
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      setErrors({ general: 'An unexpected error occurred. Please try again.' });
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      // Sign Up
+      try {
+        const result = await signUp(formData.email, formData.password, {
+          name: formData.name,
+          company: formData.company,
+          role: formData.role,
+        });
+        if (result.success) {
+          setSuccessMessage('Account created! Please check your email to verify.');
+          setTimeout(() => {
+            if (onClose) onClose();
+            setIsLoginMode(true);
+          }, 2000);
+        } else {
+          setErrors({ general: result.error });
+        }
+      } catch (error) {
+        setErrors({ general: 'An unexpected error occurred. Please try again.' });
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -160,162 +175,89 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
     }
   };
 
-  const toggleMode = () => {
-    setIsLoginMode(!isLoginMode);
-    setErrors({});
-    setSuccessMessage('');
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: 'Insurance Professional',
-      company: ''
-    });
-  };
-
   return (
-    <div style={{
-      ...styles.authContainer,
-      ...(isOverlay ? styles.authOverlayContainer : {})
-    }}>
+    <div className={`auth-container ${isOverlay ? 'auth-overlay-container' : ''}`}>
       {/* Background Animation */}
-      <div style={styles.authBackground}>
-        <div style={styles.authBgPattern}></div>
-        <div style={styles.authBgGradient}></div>
+      <div className="auth-background">
+        <div className="auth-bg-pattern"></div>
+        <div className="auth-bg-gradient"></div>
       </div>
 
       {/* Close Button for Overlay */}
       {isOverlay && onClose && (
         <button 
           onClick={onClose}
-          style={styles.authCloseButton}
-          className="close-button"
+          className="auth-close-button"
         >
           <X size={24} />
         </button>
       )}
 
       {/* Auth Content */}
-      <div style={styles.authContent}>
+      <div className="auth-content">
         {/* Left Side - Branding with Live Preview */}
-        <div style={styles.authBranding}>
-          <div style={styles.brandingContent}>
-            <div style={styles.authLogo}>
-              <div style={styles.authLogoIcon}>
+        <div className="auth-branding">
+          <div className="branding-content">
+            <div className="auth-logo">
+              <div className="auth-logo-icon">
                 <Tv color="white" size={32} />
-                <div style={styles.authLogoDot}></div>
+                <div className="auth-logo-dot"></div>
               </div>
-              <h1 style={styles.authLogoText}>GAIPTV</h1>
+              <h1 className="auth-logo-text">GAIPTV</h1>
             </div>
 
-            <h2 style={styles.brandingTitle}>
+            <h2 className="branding-title">
               Your Gateway to Insurance Excellence
             </h2>
-            <p style={styles.brandingSubtitle}>
+            <p className="branding-subtitle">
               Access exclusive content, live events, and professional insights 
               from industry leaders in insurance and risk management.
             </p>
 
             {/* Live Preview Features */}
-            <div style={{
-              padding: '20px',
-              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
-              borderRadius: '16px',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              marginBottom: '30px'
-            }}>
-              <h3 style={{
-                color: '#ef4444',
-                fontSize: '16px',
-                fontWeight: '700',
-                marginBottom: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#ef4444',
-                  borderRadius: '50%',
-                  animation: 'pulse 2s infinite'
-                }}></div>
+            <div className="live-preview">
+              <h3 className="live-preview-title">
+                <div className="live-dot"></div>
                 Live Now
               </h3>
-              <p style={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '14px',
-                marginBottom: '8px',
-                fontWeight: '600'
-              }}>
+              <p className="live-preview-event">
                 Insurance AI Summit 2025
               </p>
-              <p style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '12px',
-                marginBottom: '12px'
-              }}>
+              <p className="live-preview-viewers">
                 12,847 professionals watching live
               </p>
-              <button style={{
-                padding: '8px 16px',
-                background: 'rgba(239, 68, 68, 0.2)',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                borderRadius: '8px',
-                color: '#ef4444',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
+              <button className="join-live-button">
                 <Play size={12} />
                 Join Live Stream
               </button>
             </div>
 
             {/* Feature Highlights */}
-            <div style={styles.featuresList}>
-              <div style={styles.featureItem}>
+            <div className="features-list">
+              <div className="feature-item">
                 <Star size={20} color="#f59e0b" />
                 <span>Premium Industry Content</span>
               </div>
-              <div style={styles.featureItem}>
+              <div className="feature-item">
                 <Zap size={20} color="#ef4444" />
                 <span>Live Events & Real-time Updates</span>
               </div>
-              <div style={styles.featureItem}>
+              <div className="feature-item">
                 <CheckCircle size={20} color="#22c55e" />
                 <span>Professional Certifications</span>
               </div>
-              <div style={styles.featureItem}>
+              <div className="feature-item">
                 <Building2 size={20} color="#8b5cf6" />
                 <span>Enterprise-grade Security</span>
               </div>
             </div>
 
             {/* Testimonial */}
-            <div style={{
-              padding: '16px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              marginTop: '20px'
-            }}>
-              <p style={{
-                color: 'rgba(255, 255, 255, 0.9)',
-                fontSize: '14px',
-                fontStyle: 'italic',
-                marginBottom: '8px'
-              }}>
+            <div className="testimonial">
+              <p className="testimonial-text">
                 "GAIPTV has transformed how our team stays updated with industry trends."
               </p>
-              <p style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: '12px'
-              }}>
+              <p className="testimonial-author">
                 - Sarah Chen, Risk Manager at Global Insurance
               </p>
             </div>
@@ -323,75 +265,31 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
         </div>
 
         {/* Right Side - Auth Form */}
-        <div style={styles.authForm}>
-          <div style={styles.formContainer}>
-            <div style={styles.formHeader}>
-              <h3 style={styles.formTitle}>
-                {isLoginMode ? 'Welcome Back' : 'Join GAIPTV'}
+        <div className="auth-form">
+          <div className="form-container">
+            <div className="form-header">
+              <h3 className="form-title">
+                {isLoginMode ? 'Welcome Back' : 'Create Your Account'}
               </h3>
-              <p style={styles.formSubtitle}>
-                {isLoginMode 
-                  ? 'Sign in to access premium content and live events'
-                  : 'Create your account and start your professional journey'
-                }
+              <p className="form-subtitle">
+                {isLoginMode ? 'Sign in to access premium content and live events' : 'Join the leading platform for insurance professionals'}
               </p>
             </div>
 
             {/* Success Message */}
             {successMessage && (
-              <div style={{
-                padding: '12px 16px',
-                background: 'rgba(34, 197, 94, 0.1)',
-                border: '1px solid rgba(34, 197, 94, 0.3)',
-                borderRadius: '8px',
-                color: '#22c55e',
-                fontSize: '14px',
-                marginBottom: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
+              <div className="success-message">
                 <CheckCircle size={16} />
                 {successMessage}
               </div>
             )}
 
             {/* OAuth Buttons */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              marginBottom: '24px'
-            }}>
+            <div className="oauth-buttons">
               <button
                 onClick={() => handleOAuthLogin('google')}
                 disabled={isSubmitting || loading}
-                style={{
-                  padding: '12px 16px',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  opacity: isSubmitting ? 0.7 : 1
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSubmitting) {
-                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSubmitting) {
-                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }
-                }}
+                className="oauth-button"
               >
                 {isSubmitting ? (
                   <Loader size={16} className="animate-spin" />
@@ -409,32 +307,7 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
               <button
                 onClick={() => handleOAuthLogin('github')}
                 disabled={isSubmitting || loading}
-                style={{
-                  padding: '12px 16px',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  opacity: isSubmitting ? 0.7 : 1
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSubmitting) {
-                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSubmitting) {
-                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
-                  }
-                }}
+                className="oauth-button"
               >
                 {isSubmitting ? (
                   <Loader size={16} className="animate-spin" />
@@ -448,195 +321,108 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
             </div>
 
             {/* Divider */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginBottom: '24px',
-              gap: '16px'
-            }}>
-              <div style={{
-                flex: 1,
-                height: '1px',
-                background: 'rgba(255, 255, 255, 0.2)'
-              }}></div>
-              <span style={{
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: '12px',
-                fontWeight: '500'
-              }}>
-                or continue with email
-              </span>
-              <div style={{
-                flex: 1,
-                height: '1px',
-                background: 'rgba(255, 255, 255, 0.2)'
-              }}></div>
+            <div className="divider">
+              <div className="divider-line"></div>
+              <span>or continue with email</span>
+              <div className="divider-line"></div>
             </div>
 
-            <form onSubmit={handleSubmit} style={styles.form}>
-              {/* Name Field (Signup only) */}
+            <form onSubmit={handleSubmit} className="form">
+              {/* Name Field (Sign Up Only) */}
               {!isLoginMode && (
-                <div style={styles.inputGroup}>
-                  <label style={styles.inputLabel}>Full Name</label>
-                  <div style={styles.inputContainer}>
-                    <User size={20} style={styles.inputIcon} />
+                <div className="input-group">
+                  <label className="input-label">Full Name</label>
+                  <div className="input-container">
+                    <User size={20} className="input-icon" />
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="Enter your full name"
-                      style={{
-                        ...styles.input,
-                        ...(errors.name ? styles.inputError : {})
-                      }}
+                      className={`input ${errors.name ? 'input-error' : ''}`}
                       disabled={isSubmitting || loading}
                     />
                   </div>
                   {errors.name && (
-                    <span style={styles.errorText}>{errors.name}</span>
+                    <span className="error-text">{errors.name}</span>
                   )}
                 </div>
               )}
 
               {/* Email Field */}
-              <div style={styles.inputGroup}>
-                <label style={styles.inputLabel}>Email Address</label>
-                <div style={styles.inputContainer}>
-                  <Mail size={20} style={styles.inputIcon} />
+              <div className="input-group">
+                <label className="input-label">Email Address</label>
+                <div className="input-container">
+                  <Mail size={20} className="input-icon" />
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="Enter your email"
-                    style={{
-                      ...styles.input,
-                      ...(errors.email ? styles.inputError : {})
-                    }}
+                    className={`input ${errors.email ? 'input-error' : ''}`}
                     disabled={isSubmitting || loading}
                   />
                 </div>
                 {errors.email && (
-                  <span style={styles.errorText}>{errors.email}</span>
+                  <span className="error-text">{errors.email}</span>
                 )}
               </div>
 
-              {/* Role Field (Signup only) */}
-              {!isLoginMode && (
-                <div style={styles.inputGroup}>
-                  <label style={styles.inputLabel}>Professional Role</label>
-                  <div style={styles.inputContainer}>
-                    <Building2 size={20} style={styles.inputIcon} />
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      style={styles.input}
-                      disabled={isSubmitting || loading}
-                    >
-                      <option value="Insurance Professional">Insurance Professional</option>
-                      <option value="Risk Manager">Risk Manager</option>
-                      <option value="Compliance Officer">Compliance Officer</option>
-                      <option value="Insurance Agent">Insurance Agent</option>
-                      <option value="Underwriter">Underwriter</option>
-                      <option value="Claims Adjuster">Claims Adjuster</option>
-                      <option value="Insurance Broker">Insurance Broker</option>
-                      <option value="Actuary">Actuary</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              {/* Company Field (Signup only) */}
-              {!isLoginMode && (
-                <div style={styles.inputGroup}>
-                  <label style={styles.inputLabel}>Company (Optional)</label>
-                  <div style={styles.inputContainer}>
-                    <Building2 size={20} style={styles.inputIcon} />
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      placeholder="Your company name"
-                      style={styles.input}
-                      disabled={isSubmitting || loading}
-                    />
-                  </div>
-                </div>
-              )}
-
               {/* Password Field */}
-              <div style={styles.inputGroup}>
-                <label style={styles.inputLabel}>Password</label>
-                <div style={styles.inputContainer}>
-                  <Lock size={20} style={styles.inputIcon} />
+              <div className="input-group">
+                <label className="input-label">Password</label>
+                <div className="input-container">
+                  <Lock size={20} className="input-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Enter your password"
-                    style={{
-                      ...styles.input,
-                      ...(errors.password ? styles.inputError : {})
-                    }}
+                    className={`input ${errors.password ? 'input-error' : ''}`}
                     disabled={isSubmitting || loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    style={styles.passwordToggle}
+                    className="password-toggle"
                     disabled={isSubmitting || loading}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
                 {errors.password && (
-                  <span style={styles.errorText}>{errors.password}</span>
+                  <span className="error-text">{errors.password}</span>
                 )}
               </div>
 
-              {/* Confirm Password Field (Signup only) */}
+              {/* Confirm Password Field (Sign Up Only) */}
               {!isLoginMode && (
-                <div style={styles.inputGroup}>
-                  <label style={styles.inputLabel}>Confirm Password</label>
-                  <div style={styles.inputContainer}>
-                    <Lock size={20} style={styles.inputIcon} />
+                <div className="input-group">
+                  <label className="input-label">Confirm Password</label>
+                  <div className="input-container">
+                    <Lock size={20} className="input-icon" />
                     <input
                       type={showPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       placeholder="Confirm your password"
-                      style={{
-                        ...styles.input,
-                        ...(errors.confirmPassword ? styles.inputError : {})
-                      }}
+                      className={`input ${errors.confirmPassword ? 'input-error' : ''}`}
                       disabled={isSubmitting || loading}
                     />
                   </div>
                   {errors.confirmPassword && (
-                    <span style={styles.errorText}>{errors.confirmPassword}</span>
+                    <span className="error-text">{errors.confirmPassword}</span>
                   )}
                 </div>
               )}
 
               {/* General Error */}
               {errors.general && (
-                <div style={{
-                  padding: '12px 16px',
-                  background: 'rgba(239, 68, 68, 0.1)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: '8px',
-                  color: '#ef4444',
-                  fontSize: '14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
+                <div className="error-message">
                   <AlertCircle size={16} />
                   {errors.general}
                 </div>
@@ -646,11 +432,7 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
               <button
                 type="submit"
                 disabled={isSubmitting || loading}
-                style={{
-                  ...styles.submitButton,
-                  ...(isSubmitting || loading ? styles.submitButtonLoading : {})
-                }}
-                className="submit-button"
+                className={`submit-button ${isSubmitting || loading ? 'loading' : ''}`}
               >
                 {isSubmitting || loading ? (
                   <Loader size={18} className="animate-spin" />
@@ -664,116 +446,41 @@ const AuthScreen = ({ onClose, isOverlay = false }) => {
 
               {/* Magic Link Option for Login */}
               {isLoginMode && (
-                <button
-                  type="button"
-                  onClick={handleMagicLink}
-                  disabled={isSubmitting || loading}
-                  style={{
-                    width: '100%',
-                    padding: '12px 24px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '12px',
-                    color: 'white',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    marginTop: '12px',
-                    opacity: isSubmitting ? 0.7 : 1
-                  }}
-                >
-                  <Zap size={16} />
-                  Send Magic Link
-                </button>
+              <button
+                type="button"
+                onClick={handleMagicLink}
+                disabled={isSubmitting || loading}
+                className="magic-link-button"
+              >
+                <Zap size={16} />
+                Send Magic Link
+              </button>
               )}
 
-              {/* Mode Toggle */}
-              <div style={styles.modeToggle}>
-                <span style={styles.modeToggleText}>
-                  {isLoginMode 
-                    ? "Don't have an account? " 
-                    : "Already have an account? "
-                  }
-                </span>
+              {/* Toggle between Login and Sign Up */}
+              <div className="toggle-auth-mode">
                 <button
                   type="button"
-                  onClick={toggleMode}
-                  style={styles.modeToggleButton}
-                  className="mode-toggle-button"
+                  onClick={() => setIsLoginMode(!isLoginMode)}
                   disabled={isSubmitting || loading}
                 >
-                  {isLoginMode ? 'Sign Up' : 'Sign In'}
+                  {isLoginMode
+                    ? "Don't have an account? Sign Up"
+                    : 'Already have an account? Sign In'}
                 </button>
               </div>
-
-              {/* Forgot Password (Login only) */}
-              {isLoginMode && (
-                <button
-                  type="button"
-                  style={styles.forgotPassword}
-                  className="forgot-password"
-                  disabled={isSubmitting || loading}
-                >
-                  Forgot your password?
-                </button>
-              )}
             </form>
 
-            {/* Terms and Privacy */}
-            {!isLoginMode && (
-              <div style={{
-                marginTop: '20px',
-                padding: '16px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                fontSize: '12px',
-                color: 'rgba(255, 255, 255, 0.6)',
-                textAlign: 'center',
-                lineHeight: '1.4'
-              }}>
-                By creating an account, you agree to our{' '}
-                <a href="#" style={{ color: '#8b5cf6', textDecoration: 'none' }}>
-                  Terms of Service
-                </a>{' '}
-                and{' '}
-                <a href="#" style={{ color: '#8b5cf6', textDecoration: 'none' }}>
-                  Privacy Policy
-                </a>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       {/* Loading Overlay */}
       {loading && (
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 10
-        }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '16px'
-          }}>
-            <Loader size={32} className="animate-spin" style={{ color: '#8b5cf6' }} />
-            <span style={{ color: 'white', fontSize: '14px' }}>
-              Setting up your account...
-            </span>
+        <div className="loading-overlay">
+          <div className="loading-content">
+            <Loader size={32} className="animate-spin" />
+            <span>Setting up your account...</span>
           </div>
         </div>
       )}

@@ -53,7 +53,7 @@ export const authHelpers = {
         options: {
           data: {
             full_name: userData.name || '',
-            role: userData.role || 'Insurance Professional',
+            role: userData.role || 'user',
             company: userData.company || '',
             avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name || email)}&background=8b5cf6&color=fff`
           }
@@ -92,20 +92,7 @@ export const authHelpers = {
       return { data, error: null };
     } catch (error) {
       console.error('Sign in error:', error);
-      
-      // Provide more specific error messages
-      let userFriendlyMessage = 'Sign in failed';
-      if (error.message?.includes('Invalid API key')) {
-        userFriendlyMessage = 'Configuration error. Please contact support.';
-      } else if (error.message?.includes('Invalid login credentials')) {
-        userFriendlyMessage = 'Invalid email or password';
-      } else if (error.message?.includes('Email not confirmed')) {
-        userFriendlyMessage = 'Please check your email and confirm your account';
-      } else if (error.message?.includes('Too many requests')) {
-        userFriendlyMessage = 'Too many attempts. Please try again later';
-      }
-      
-      return { data: null, error: userFriendlyMessage };
+      return { data: null, error: error.message || 'Sign in failed' };
     }
   },
 
@@ -253,12 +240,12 @@ export const dbHelpers = {
       console.log('Creating user profile for:', user.email);
       
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users')
         .upsert({
           id: user.id,
           email: user.email,
           full_name: user.user_metadata?.full_name || '',
-          role: user.user_metadata?.role || 'Insurance Professional',
+          role: user.user_metadata?.role || 'user',
           company: user.user_metadata?.company || '',
           avatar_url: user.user_metadata?.avatar_url || '',
           subscription_plan: 'Free',
@@ -284,22 +271,52 @@ export const dbHelpers = {
   getUserProfile: async (userId) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users')
         .select('*')
         .eq('id', userId)
         .single();
-      
+
       if (error) {
-        // Don't log error if profile doesn't exist yet
-        if (!error.message.includes('No rows')) {
-          console.error('Get profile error:', error);
+        // If the error is that no rows were found, this is not a "real" error.
+        // It just means the profile doesn't exist yet. Return null.
+        if (error.code === 'PGRST116') {
+          console.log(`No profile found for user ${userId}. This is expected for new users.`);
+          return { data: null, error: null };
         }
+        
+        // For other errors, log them.
+        console.error('Get profile error:', error);
         return { data: null, error: error.message };
       }
       
       return { data, error: null };
     } catch (error) {
       console.error('Get profile error:', error);
+      return { data: null, error: error.message };
+    }
+  },
+
+  // Get admin profile
+  getAdminProfile: async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.log(`No admin profile found for user ${userId}.`);
+          return { data: null, error: null };
+        }
+        console.error('Get admin profile error:', error);
+        return { data: null, error: error.message };
+      }
+      
+      return { data, error: null };
+    } catch (error) {
+      console.error('Get admin profile error:', error);
       return { data: null, error: error.message };
     }
   },
@@ -442,7 +459,7 @@ export const adminHelpers = {
     try {
       const offset = (page - 1) * limit;
       const { data, error, count } = await supabase
-        .from('profiles')
+        .from('users')
         .select('*', { count: 'exact' })
         .range(offset, offset + limit - 1)
         .order('created_at', { ascending: false });
@@ -458,7 +475,7 @@ export const adminHelpers = {
   updateUserStatus: async (userId, updates) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('users')
         .update(updates)
         .eq('id', userId);
 
@@ -591,7 +608,7 @@ export const subscriptions = {
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'profiles',
+        table: 'users',
         filter: `id=eq.${userId}`
       }, callback)
       .subscribe();

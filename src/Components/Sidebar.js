@@ -12,7 +12,7 @@ import {
   Users,
   Zap
 } from 'lucide-react';
-import styles from './Styles';
+import './Sidebar.css';
 
 const Sidebar = ({ news, onNewsClick, user }) => {
   const [hoveredNewsId, setHoveredNewsId] = useState(null);
@@ -32,11 +32,11 @@ const Sidebar = ({ news, onNewsClick, user }) => {
   const getBadgeStyle = (type) => {
     switch (type) {
       case 'breaking':
-        return styles.newsBadgeBreaking;
+        return 'news-badge-breaking';
       case 'update':
-        return styles.newsBadgeUpdate;
+        return 'news-badge-update';
       default:
-        return styles.newsBadgeDefault;
+        return 'news-badge-default';
     }
   };
 
@@ -71,17 +71,11 @@ const Sidebar = ({ news, onNewsClick, user }) => {
   } : null;
 
   return (
-    <div style={styles.sidebar}>
-      <div style={styles.sidebarContent}>
+    <div className="sidebar">
+      <div className="sidebar-content">
         {/* Tab Navigation for Authenticated Users */}
         {user && (
-          <div style={{
-            display: 'flex',
-            marginBottom: '20px',
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '12px',
-            padding: '4px'
-          }}>
+          <div className="tab-navigation">
             {[
               { id: 'news', label: 'News', icon: TrendingUp },
               { id: 'learning', label: 'Learning', icon: BookOpen },
@@ -90,24 +84,7 @@ const Sidebar = ({ news, onNewsClick, user }) => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  background: activeTab === tab.id 
-                    ? 'linear-gradient(135deg, #8b5cf6, #3b82f6)' 
-                    : 'transparent',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px'
-                }}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
               >
                 <tab.icon size={14} />
                 {tab.label}
@@ -119,52 +96,41 @@ const Sidebar = ({ news, onNewsClick, user }) => {
         {/* News Tab Content */}
         {(!user || activeTab === 'news') && (
           <>
-            <div style={styles.sidebarHeader}>
-              <h3 style={styles.sidebarTitle}>
+            <div className="sidebar-header">
+              <h3 className="sidebar-title">
                 <TrendingUp size={20} />
                 <span>News & Updates</span>
               </h3>
-              <button style={styles.refreshButton} className="refresh-button">
+              <button className="refresh-button">
                 <RefreshCw size={16} />
               </button>
             </div>
 
-            <div style={styles.newsContainer}>
+            <div className="news-container">
               {news.map(newsItem => (
                 <div 
                   key={newsItem.id} 
-                  style={{
-                    ...styles.newsItem,
-                    ...(hoveredNewsId === newsItem.id ? { 
-                      background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1))',
-                      transform: 'translateX(5px)',
-                      boxShadow: '0 8px 25px rgba(139, 92, 246, 0.2)'
-                    } : {})
-                  }}
+                  className="news-item"
                   onMouseEnter={() => setHoveredNewsId(newsItem.id)}
                   onMouseLeave={() => setHoveredNewsId(null)}
                   onClick={(e) => onNewsClick && onNewsClick(newsItem, e)}
-                  className="news-item"
                 >
-                  <div style={styles.newsHeader}>
-                    <div style={styles.newsDateContainer}>
+                  <div className="news-header">
+                    <div className="news-date-container">
                       {getNewsIcon(newsItem.type)}
-                      <span style={{
-                        ...styles.newsBadge,
-                        ...getBadgeStyle(newsItem.type)
-                      }}>
+                      <span className={`news-badge ${getBadgeStyle(newsItem.type)}`}>
                         {newsItem.date}
                       </span>
                     </div>
                   </div>
 
-                  <h4 style={styles.newsTitle}>{newsItem.title}</h4>
-                  <p style={styles.newsContent}>{newsItem.content}</p>
+                  <h4 className="news-title">{newsItem.title}</h4>
+                  <p className="news-content">{newsItem.content}</p>
                 </div>
               ))}
             </div>
 
-            <button style={styles.viewAllButton} className="view-all-button">
+            <button className="view-all-button">
               <span>View All Updates</span>
               <ChevronRight size={16} />
             </button>
@@ -174,148 +140,48 @@ const Sidebar = ({ news, onNewsClick, user }) => {
         {/* Learning Tab Content */}
         {user && activeTab === 'learning' && (
           <div>
-            <div style={styles.sidebarHeader}>
-              <h3 style={styles.sidebarTitle}>
+            <div className="sidebar-header">
+              <h3 className="sidebar-title">
                 <BookOpen size={20} />
                 <span>Learning Progress</span>
               </h3>
             </div>
 
             {/* Weekly Goal */}
-            <div style={{
-              marginBottom: '20px',
-              padding: '16px',
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05))',
-              borderRadius: '12px',
-              border: '1px solid rgba(139, 92, 246, 0.2)'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '8px'
-              }}>
-                <span style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: 'white'
-                }}>
-                  Weekly Goal
-                </span>
-                <span style={{
-                  fontSize: '12px',
-                  color: '#8b5cf6',
-                  fontWeight: '600'
-                }}>
-                  {userLearningData.completed}/{userLearningData.weeklyGoal}
-                </span>
+            <div className="weekly-goal">
+              <div className="weekly-goal-header">
+                <span>Weekly Goal</span>
+                <span>{userLearningData.completed}/{userLearningData.weeklyGoal}</span>
               </div>
-              <div style={{
-                width: '100%',
-                height: '6px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '3px',
-                overflow: 'hidden'
-              }}>
-                <div style={{
-                  width: `${(userLearningData.completed / userLearningData.weeklyGoal) * 100}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, #8b5cf6, #3b82f6)',
-                  borderRadius: '3px',
-                  transition: 'width 0.3s ease'
-                }} />
+              <div className="progress-bar-container">
+                <div 
+                  className="progress-bar"
+                  style={{ width: `${(userLearningData.completed / userLearningData.weeklyGoal) * 100}%` }} 
+                />
               </div>
             </div>
 
             {/* Learning Stats */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '12px',
-              marginBottom: '20px'
-            }}>
-              <div style={{
-                padding: '12px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#22c55e',
-                  marginBottom: '4px'
-                }}>
-                  {userLearningData.streak}
-                </div>
-                <div style={{
-                  fontSize: '11px',
-                  color: 'rgba(255, 255, 255, 0.6)'
-                }}>
-                  Day Streak
-                </div>
+            <div className="learning-stats">
+              <div className="stat-item">
+                <div className="stat-value streak">{userLearningData.streak}</div>
+                <div className="stat-label">Day Streak</div>
               </div>
-              <div style={{
-                padding: '12px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#f59e0b',
-                  marginBottom: '4px'
-                }}>
-                  {userLearningData.certificates}
-                </div>
-                <div style={{
-                  fontSize: '11px',
-                  color: 'rgba(255, 255, 255, 0.6)'
-                }}>
-                  Certificates
-                </div>
+              <div className="stat-item">
+                <div className="stat-value certificates">{userLearningData.certificates}</div>
+                <div className="stat-label">Certificates</div>
               </div>
             </div>
 
             {/* Recent Achievement */}
             {userLearningData.recentAchievements.length > 0 && (
-              <div style={{
-                padding: '12px',
-                background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05))',
-                borderRadius: '10px',
-                border: '1px solid rgba(251, 191, 36, 0.2)',
-                marginBottom: '20px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '6px'
-                }}>
+              <div className="recent-achievement">
+                <div className="achievement-header">
                   <Award size={16} color="#f59e0b" />
-                  <span style={{
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: '#f59e0b'
-                  }}>
-                    New Achievement!
-                  </span>
+                  <span>New Achievement!</span>
                 </div>
-                <div style={{
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: '2px'
-                }}>
-                  {userLearningData.recentAchievements[0].title}
-                </div>
-                <div style={{
-                  fontSize: '11px',
-                  color: 'rgba(255, 255, 255, 0.6)'
-                }}>
-                  {userLearningData.recentAchievements[0].description}
-                </div>
+                <div className="achievement-title">{userLearningData.recentAchievements[0].title}</div>
+                <div className="achievement-description">{userLearningData.recentAchievements[0].description}</div>
               </div>
             )}
           </div>
@@ -324,75 +190,28 @@ const Sidebar = ({ news, onNewsClick, user }) => {
         {/* Events Tab Content */}
         {user && activeTab === 'events' && (
           <div>
-            <div style={styles.sidebarHeader}>
-              <h3 style={styles.sidebarTitle}>
+            <div className="sidebar-header">
+              <h3 className="sidebar-title">
                 <Calendar size={20} />
                 <span>Upcoming Events</span>
               </h3>
             </div>
 
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              marginBottom: '20px'
-            }}>
+            <div className="events-container">
               {userLearningData.upcomingEvents.map(event => (
-                <div
-                  key={event.id}
-                  style={{
-                    padding: '12px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  className="interactive-hover"
-                >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    marginBottom: '6px'
-                  }}>
-                    <div style={{
-                      padding: '4px',
-                      background: event.type === 'webinar' 
-                        ? 'rgba(59, 130, 246, 0.2)' 
-                        : 'rgba(139, 92, 246, 0.2)',
-                      borderRadius: '4px'
-                    }}>
+                <div key={event.id} className="event-item interactive-hover">
+                  <div className="event-header">
+                    <div className={`event-icon ${event.type}`}>
                       {event.type === 'webinar' ? (
                         <Users size={12} color="#3b82f6" />
                       ) : (
                         <Target size={12} color="#8b5cf6" />
                       )}
                     </div>
-                    <span style={{
-                      fontSize: '11px',
-                      color: event.type === 'webinar' ? '#3b82f6' : '#8b5cf6',
-                      fontWeight: '600',
-                      textTransform: 'uppercase'
-                    }}>
-                      {event.type}
-                    </span>
+                    <span className={`event-type ${event.type}`}>{event.type}</span>
                   </div>
-                  <div style={{
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '4px'
-                  }}>
-                    {event.title}
-                  </div>
-                  <div style={{
-                    fontSize: '11px',
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}>
+                  <div className="event-title">{event.title}</div>
+                  <div className="event-date">
                     <Clock size={10} />
                     {event.date}
                   </div>
@@ -400,11 +219,7 @@ const Sidebar = ({ news, onNewsClick, user }) => {
               ))}
             </div>
 
-            <button style={{
-              ...styles.viewAllButton,
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-              marginBottom: '20px'
-            }}>
+            <button className="view-all-button calendar-button">
               <span>View Calendar</span>
               <Calendar size={16} />
             </button>
@@ -412,80 +227,28 @@ const Sidebar = ({ news, onNewsClick, user }) => {
         )}
 
         {/* Platform Stats (always visible) */}
-        <div style={{
-          padding: '20px',
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.15))',
-          borderRadius: '16px',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          boxShadow: '0 0 20px rgba(139, 92, 246, 0.1)'
-        }}>
-          <h4 style={{
-            color: 'white',
-            fontSize: '14px',
-            fontWeight: '600',
-            marginBottom: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <Zap size={16} style={{ color: '#a855f7' }} />
+        <div className="platform-stats">
+          <h4>
+            <Zap size={16} />
             Platform Stats
           </h4>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontSize: '12px'
-            }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Live Viewers</span>
-              <span style={{ 
-                color: '#22c55e', 
-                fontWeight: '600',
-                textShadow: '0 0 10px rgba(34, 197, 94, 0.5)'
-              }}>12,847</span>
+          <div className="stats-grid">
+            <div className="stat-row">
+              <span>Live Viewers</span>
+              <span className="stat-value live">12,847</span>
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontSize: '12px'
-            }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Total Videos</span>
-              <span style={{ color: 'white', fontWeight: '600' }}>127</span>
+            <div className="stat-row">
+              <span>Total Videos</span>
+              <span className="stat-value">127</span>
             </div>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontSize: '12px'
-            }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Today's Views</span>
-              <span style={{ 
-                color: '#60a5fa', 
-                fontWeight: '600',
-                textShadow: '0 0 10px rgba(96, 165, 250, 0.5)'
-              }}>25.3K</span>
+            <div className="stat-row">
+              <span>Today's Views</span>
+              <span className="stat-value views">25.3K</span>
             </div>
             {user && (
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                fontSize: '12px',
-                paddingTop: '8px',
-                borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-              }}>
-                <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Your Progress</span>
-                <span style={{ 
-                  color: '#8b5cf6', 
-                  fontWeight: '600',
-                  textShadow: '0 0 10px rgba(139, 92, 246, 0.5)'
-                }}>
+              <div className="stat-row progress-row">
+                <span>Your Progress</span>
+                <span className="stat-value progress">
                   {Math.round((userLearningData.completed / userLearningData.weeklyGoal) * 100)}%
                 </span>
               </div>

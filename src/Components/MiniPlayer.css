@@ -1,0 +1,44 @@
+.mini-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(15, 15, 35, 0.9));
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mini-player.scroll-based {
+  border: 2px solid rgba(59, 130, 246, 0.6);
+  box-shadow: 0 25px 50px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+}
+
+.mini-player.manual {
+  border: 2px solid rgba(239, 68, 68, 0.6);
+  box-shadow: 0 25px 50px rgba(239, 68, 68, 0.3), 0 0 60px rgba(239, 68, 68, 0.1);
+}
+
+.mini-player-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.8);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+}
+
+.mini-player-video {
+  aspect-ratio: 16/9;
+  border-radius: 16px;
+  overflow: hidden;
+}
