@@ -18,7 +18,7 @@ import {
   Star
 } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import './AuthScreen.css';
+import './styles/AuthScreen.css';
 
 const AuthScreen = ({ onClose, isOverlay = false }) => {
   const { signIn, signUp, signInWithMagicLink, signInWithOAuth, loading } = useAuth();

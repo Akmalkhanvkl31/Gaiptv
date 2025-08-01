@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './Components/AuthContext';
 import MainApplication from './MainApplication';
 import GuestLanding from './Components/GuestLanding';
+import MainScreen from './Components/MainScreen';
 import mockData from './Components/mockData';
 import AuthScreen from './Components/AuthScreen';
 import About from './Components/About/About';
@@ -42,6 +43,7 @@ function AppRoutes() {
           <AdminPage />
         </AdminRoute>
       } />
+      <Route path="/main" element={<MainScreen />} />
       <Route path="/access-denied" element={<AccessDenied />} />
     </Routes>
   );

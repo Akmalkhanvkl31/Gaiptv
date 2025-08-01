@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Play, 
   Users, 
@@ -21,6 +22,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
   const [selectedLiveStream, setSelectedLiveStream] = useState(null);
   const [hoveredVideo, setHoveredVideo] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Auto-select the first live stream
@@ -37,6 +39,10 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
 
   const handleGetStarted = () => {
     onSignIn();
+  };
+
+  const handleLogin = () => {
+    navigate('/main');
   };
 
   return (
@@ -113,7 +119,7 @@ const GuestLanding = ({ onSignIn, onSignUp, liveStreams, featuredVideos, news })
               marginBottom: '32px'
             }}>
               <button
-                onClick={handleGetStarted}
+                onClick={handleLogin}
                 style={{
                   padding: '16px 32px',
                   background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
