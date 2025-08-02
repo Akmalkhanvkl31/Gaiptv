@@ -20,7 +20,7 @@ import {
 import { useAuth } from './AuthContext';
 import './AuthScreen.css';
 
-const AuthScreen = ({ onClose, isOverlay = false }) => {
+const AuthScreen = ({ onSignUp, onClose, isOverlay = false }) => {
   const { signIn, signUp, signInWithMagicLink, signInWithOAuth, loading } = useAuth();
   const navigate = useNavigate();
   

@@ -2,12 +2,13 @@ import React from 'react';
 import { Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
 import './PlayerOverlay.css';
 
-const PlayerOverlay = ({ 
-  video, 
-  playerSize, 
+const PlayerOverlay = ({
+  video,
+  playerSize,
   isMuted,
   onFullscreen,
   onMinimize,
+  onMuteToggle,
   isLive = false,
   viewers,
   showCaptions,
@@ -17,7 +18,6 @@ const PlayerOverlay = ({
   onLayoutModeChange,
   onPlayerSizeChange
 }) => {
-  
   if (!video) return null;
 
   return (
@@ -51,10 +51,71 @@ const PlayerOverlay = ({
               )}
             </div>
           </div>
-          
+
+          {/* Player Controls */}
           {isMainPlayer && (
             <div className={`player-controls ${showPlayerControls ? 'show' : ''}`}>
-              
+              {/* Mute/Unmute */}
+              {onMuteToggle && (
+                <button
+                  className="control-button mute-toggle"
+                  onClick={onMuteToggle}
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                  type="button"
+                >
+                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+              )}
+
+              {/* Fullscreen */}
+              {onFullscreen && (
+                <button
+                  className="control-button fullscreen-toggle"
+                  onClick={onFullscreen}
+                  aria-label="Toggle fullscreen"
+                  type="button"
+                >
+                  <Maximize size={20} />
+                </button>
+              )}
+
+              {/* Minimize */}
+              {onMinimize && (
+                <button
+                  className="control-button minimize-toggle"
+                  onClick={onMinimize}
+                  aria-label="Minimize player"
+                  type="button"
+                >
+                  <Minimize size={20} />
+                </button>
+              )}
+
+              {/* Layout Mode */}
+              {onLayoutModeChange && (
+                <button
+                  className="control-button layout-toggle"
+                  onClick={onLayoutModeChange}
+                  aria-label="Change layout mode"
+                  type="button"
+                >
+                  {layoutMode === 'grid' ? 'Grid View' : 'List View'}
+                </button>
+              )}
+
+              {/* Player Size */}
+              {onPlayerSizeChange && (
+                <button
+                  className="control-button size-toggle"
+                  onClick={() =>
+                    onPlayerSizeChange(playerSize === 'compact' ? 'normal' : 'compact')
+                  }
+                  aria-label="Toggle player size"
+                  type="button"
+                >
+                  {playerSize === 'compact' ? 'Expand' : 'Compact'}
+                </button>
+              )}
             </div>
           )}
         </div>

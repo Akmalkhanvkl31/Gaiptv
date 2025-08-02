@@ -1,10 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import PlayerOverlay from './PlayerOverlay';
-import ProgressIndicator from './ProgressIndicator';
-import VideoIframe from './VideoIframe';
-import { Volume2, VolumeX } from 'lucide-react';
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 
-const LivePlayer = ({
+const LivePlayer = forwardRef(({
   video,
   isMainPlayer = true,
   isMiniPlayer,
@@ -17,139 +13,60 @@ const LivePlayer = ({
   layoutMode = 'split',
   onPlayerSizeChange,
   onLayoutModeChange
-}) => {
+}, ref) => {
   const [isMuted, setIsMuted] = useState(muted);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showCaptions, setShowCaptions] = useState(true);
-  const [showPlayerControls, setShowPlayerControls] = useState(true);
-  const [controlsHideTimeout, setControlsHideTimeout] = useState(null);
-
   const iframeRef = useRef(null);
-  const playerContainerRef = useRef(null);
-  const captionTimerRef = useRef(null);
 
   useEffect(() => {
     setIsMuted(muted);
   }, [muted]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, [video]);
-
-  useEffect(() => {
-    if (isMainPlayer && showCaptions) {
-      clearTimeout(captionTimerRef.current);
-      const timeout = setTimeout(() => setShowCaptions(false),
-        playerSize === 'compact' ? 3000 :
-        playerSize === 'cinema' ? 7000 : 5000
-      );
-      captionTimerRef.current = timeout;
-    }
-    return () => clearTimeout(captionTimerRef.current);
-  }, [isMainPlayer, showCaptions, video, playerSize]);
-
-  useEffect(() => {
-    if (video && isMainPlayer) {
-      setShowPlayerControls(true);
-      const timeout = setTimeout(() => setShowPlayerControls(false), 5000);
-      setControlsHideTimeout(timeout);
-    }
-    return () => clearTimeout(controlsHideTimeout);
-  }, [video, isMainPlayer]);
-
-  useEffect(() => {
-    if (isHovered && isMainPlayer) {
-      setShowCaptions(true);
-    }
-  }, [isHovered, isMainPlayer]);
-
-  const handleShowControls = () => {
-    setShowPlayerControls(true);
-    clearTimeout(controlsHideTimeout);
-    const timeout = setTimeout(() => setShowPlayerControls(false), 3000);
-    setControlsHideTimeout(timeout);
+  const handleMuteToggle = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    if (onMuteToggle) onMuteToggle(newMuted);
   };
-
-  
 
   const handleFullscreen = () => {
-    if (iframeRef.current?.requestFullscreen) iframeRef.current.requestFullscreen();
-  };
-
-  const handleMuteToggle = () => {
-    setIsMuted(!isMuted);
-    if (onMuteToggle) {
-      onMuteToggle(!isMuted);
+    if (iframeRef.current?.requestFullscreen) {
+      iframeRef.current.requestFullscreen();
     }
   };
 
   const getContainerStyle = () => ({
     position: 'relative',
     width: '100%',
-    height: '100%',
+    aspectRatio: '16 / 9',
+    minHeight: '200px',
+    maxHeight: '100vh',
     borderRadius: playerSize === 'theater' ? '0' : '20px',
     overflow: 'hidden',
-    background: '#000'
+    background: '#000',
   });
 
   if (!video) return null;
 
   return (
     <div
-      ref={playerContainerRef}
+      ref={ref} // 👈 forwarded ref for scroll tracking
       style={getContainerStyle()}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        handleShowControls();
-      }}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={handleShowControls}
     >
-        
-      {/* Overlay - shown only if not in mini player mode */}
-      {showOverlay && !isMiniPlayer && (
-        <PlayerOverlay
-          video={video}
-          isMuted={isMuted}
-          isHovered={isHovered}
-          showCaptions={showCaptions}
-          showPlayerControls={showPlayerControls}
-          onFullscreen={handleFullscreen}
-          onMinimize={onMinimize}
-          playerSize={playerSize}
-          layoutMode={layoutMode}
-          onPlayerSizeChange={onPlayerSizeChange}
-          onLayoutModeChange={onLayoutModeChange}
-          isMainPlayer={isMainPlayer}
-          isMiniPlayer={false}
-        />
-      )}
-
-      
-
-      {/* Video */}
-      <VideoIframe
+      {/* Main video iframe */}
+      <iframe
         ref={iframeRef}
-        video={video}
-        playerSize={playerSize}
-        autoplay={autoplay}
-        muted={isMuted}
-        onLoad={() => setIsLoading(false)}
-        isLoading={isLoading}
+        src="https://iframes.5centscdn.in/5centscdn/hls/skin1/kygt6dlsg6zh7rmq/aHR0cHM6Ly80M3dyempucHFveGUtaGxzLWxpdmUud21uY2RuLm5ldC9HQUlQL1RWL3BsYXlsaXN0Lm0zdTg=?showcv=true&title=GAIP/TV"
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          display: 'block',
+        }}
       />
-
-      {/* Progress */}
-      {!video.isLive && isMainPlayer && (
-        <ProgressIndicator
-          progress={video.watchProgress}
-          playerSize={playerSize}
-          isVisible={video.watchProgress > 0}
-        />
-      )}
     </div>
   );
-};
+});
 
 export default LivePlayer;

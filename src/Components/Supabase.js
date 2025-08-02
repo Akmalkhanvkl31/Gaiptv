@@ -271,11 +271,12 @@ export const dbHelpers = {
   getUserProfile: async (userId) => {
     try {
       const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .limit(1)
+      .maybeSingle();;
+      
       if (error) {
         // If the error is that no rows were found, this is not a "real" error.
         // It just means the profile doesn't exist yet. Return null.

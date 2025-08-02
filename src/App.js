@@ -1,14 +1,14 @@
 import React from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './Components/AuthContext';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth, AuthProvider } from './Components/AuthContext';
 import MainApplication from './MainApplication';
 import GuestLanding from './Components/GuestLanding';
 import mockData from './Components/mockData';
 import AuthScreen from './Components/AuthScreen';
-import About from './Components/About/About';
-import AdminPage from './Components/AdminPage';
 import AdminLogin from './Components/AdminLogin';
+import AdminDashboard from './Components/AdminDashboard';  
 import AdminRoute from './Components/AdminRoute';
+import About from './Components/About/About';
 import AccessDenied from './Components/AccessDenied';
 
 function App() {
@@ -20,29 +20,71 @@ function App() {
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    navigate('/auth');
+    navigate('/auth?form=signin');
   };
 
   const handleSignUp = () => {
-    navigate('/auth');
+    navigate('/auth?form=signup');
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
-      <Route path="/" element={user ? <MainApplication /> : <GuestLanding onSignIn={handleSignIn} onSignUp={handleSignUp} liveStreams={mockData.liveStreams} featuredVideos={mockData.featuredVideos} news={mockData.news} />} />
+      {/* Guest landing with sign in/up handlers */}
+      <Route
+        path="/"
+        element={
+          user ? (
+            <Navigate to="/home" />
+          ) : (
+            <GuestLanding
+              liveStreams={mockData.liveStreams}
+              featuredVideos={mockData.featuredVideos}
+              news={mockData.news}
+              onSignIn={handleSignIn}
+              onSignUp={handleSignUp}
+            />
+          )
+        }
+      />
+
+      {/* Auth page */}
       <Route path="/auth" element={<AuthScreen />} />
+
+      {/* About page */}
       <Route path="/about" element={<About />} />
+
+      {/* Admin login */}
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={
-        <AdminRoute>
-          <AdminPage />
-        </AdminRoute>
-      } />
+
+      {/* Protected Admin route */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard /> {/* Or use AdminPage if you want */}
+          </AdminRoute>
+        }
+      />
+
+      {/* Access Denied page */}
       <Route path="/access-denied" element={<AccessDenied />} />
+
+      {/* Main app for logged in users */}
+      <Route
+        path="/home"
+        element={user ? <MainApplication /> : <Navigate to="/auth?form=signin" />}
+      />
+
+      {/* Catch all unmatched routes - optional */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
