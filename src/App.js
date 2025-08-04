@@ -24,7 +24,7 @@ function AppRoutes() {
   const navigate = useNavigate();
 
   const handleSignIn = () => {
-    navigate('/auth?form=signin');
+    navigate('/auth');
   };
 
   const handleSignUp = () => {
@@ -80,7 +80,7 @@ function AppRoutes() {
       {/* Main app for logged in users */}
       <Route
         path="/home"
-        element={user ? <MainApplication /> : <Navigate to="/auth?form=signin" />}
+        element={user ? <MainApplication /> : <Navigate to="/auth" />}
       />
 
       {/* Catch all unmatched routes - optional */}
