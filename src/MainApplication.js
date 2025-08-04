@@ -10,6 +10,7 @@ const MainApplication = () => {
   const [currentVideo, setCurrentVideo] = useState(mockData.liveStreams[0]);
   const [showMiniPlayer, setShowMiniPlayer] = useState(false);
   const [miniPlayerVideo, setMiniPlayerVideo] = useState(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const playerContainerRef = useRef(null);
 
@@ -33,12 +34,30 @@ const MainApplication = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      playerContainerRef.current?.requestFullscreen().catch(err => {
+        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
+
   return (
     <div style={{ backgroundColor: '#111827', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
 
       {/* Main Player */}
-      <div ref={playerContainerRef}>
+      <div ref={playerContainerRef} className={isFullScreen ? 'fullscreen-player' : ''}>
         <LivePlayer
           video={currentVideo}
           isMainPlayer={true}
@@ -47,6 +66,8 @@ const MainApplication = () => {
           onMuteToggle={() => {}}
           onMinimize={() => {}}
           playerSize="cinema"
+          isFullScreen={isFullScreen}
+          onToggleFullScreen={toggleFullScreen}
         />
       </div>
 

@@ -300,3 +300,41 @@
   align-items: center;
   gap: 6px;
 }
+
+@media (max-width: 768px) {
+  .card-content {
+    padding: 15px;
+  }
+  .card-title {
+    font-size: 14px;
+  }
+  .card-description {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-card {
+    border-radius: 10px;
+  }
+  .card-content {
+    padding: 10px;
+  }
+  .card-title {
+    font-size: 13px;
+  }
+  .card-description {
+    display: none;
+  }
+  .card-meta {
+    font-size: 10px;
+  }
+  .recommended-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+  .live-badge-overlay {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}

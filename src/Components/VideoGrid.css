@@ -1,6 +1,6 @@
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 
@@ -136,10 +136,34 @@
 
 @media (max-width: 768px) {
   .video-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
   }
   .controls-bar {
     flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+  }
+  .controls-bar-left {
+    flex-direction: column;
     gap: 10px;
+    align-items: stretch;
+  }
+  .personal-stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .controls-bar {
+    padding: 8px;
+  }
+  .sort-button {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import { Maximize, Minimize } from 'lucide-react';
 
 const LivePlayer = forwardRef(({
   video,
@@ -12,7 +13,9 @@ const LivePlayer = forwardRef(({
   playerSize = 'cinema',
   layoutMode = 'split',
   onPlayerSizeChange,
-  onLayoutModeChange
+  onLayoutModeChange,
+  isFullScreen,
+  onToggleFullScreen
 }, ref) => {
   const [isMuted, setIsMuted] = useState(muted);
   const iframeRef = useRef(null);
@@ -25,12 +28,6 @@ const LivePlayer = forwardRef(({
     const newMuted = !isMuted;
     setIsMuted(newMuted);
     if (onMuteToggle) onMuteToggle(newMuted);
-  };
-
-  const handleFullscreen = () => {
-    if (iframeRef.current?.requestFullscreen) {
-      iframeRef.current.requestFullscreen();
-    }
   };
 
   const getContainerStyle = () => ({
@@ -65,6 +62,11 @@ const LivePlayer = forwardRef(({
           display: 'block',
         }}
       />
+      <div style={{ position: 'absolute', bottom: '10px', right: '10px', zIndex: 10 }}>
+        <button onClick={onToggleFullScreen} style={{ background: 'rgba(0,0,0,0.5)', border: 'none', color: 'white', padding: '8px', borderRadius: '50%', cursor: 'pointer' }}>
+          {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+        </button>
+      </div>
     </div>
   );
 });

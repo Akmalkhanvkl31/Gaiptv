@@ -545,62 +545,11 @@ hr {
 }
 
 /* Responsive Styles */
-@media (max-width: 1024px) {
-  .search-input input {
-    width: 200px;
-  }
-  .nav-tabs {
-    gap: 2px;
-  }
-  .nav-tab-button {
-    padding: 10px 12px;
-  }
-}
-
 @media (max-width: 1200px) {
-  .search-input, .right-controls {
+  .search-input, .right-controls, .nav-tabs {
     display: none;
   }
   .mobile-menu {
     display: flex;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-content {
-    padding: 0 16px;
-  }
-  .nav-tabs, .search-input, .right-controls .notification-button-wrapper, .right-controls .profile-btn, .right-controls .sign-in-btn {
-    display: none;
-  }
-  .mobile-menu {
-    display: flex;
-  }
-  .logo-section {
-    padding: 6px 8px;
-    min-width: auto;
-  }
-  .logo-icon {
-    width: 28px;
-    height: 28px;
-  }
-  .logo-icon img {
-    width: 16px;
-    height: 16px;
-  }
-  .logo-text h1 {
-    font-size: 16px;
-  }
-  .logo-text p {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-content {
-    padding: 0 12px;
-  }
-  .logo-text h1 {
-    font-size: 14px;
   }
 }
