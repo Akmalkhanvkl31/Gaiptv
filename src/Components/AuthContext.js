@@ -65,11 +65,21 @@ export const AuthProvider = ({ children }) => {
           // Check for admin profile first
           const { data: adminProfile, error: adminError } = await dbHelpers.getAdminProfile(currentUser.id);
 
-          if (adminProfile && adminProfile.role === 'admin') {
+          if (adminProfile) {
             setProfile(adminProfile);
-            navigate('/admin');
-          } else {
-            // Not an admin or an error occurred, proceed with normal user profile
+            if (adminProfile.role === 'admin') {
+              navigate('/admin');
+            } else {
+              // Has an admin table entry but not admin role, sign out for security.
+              await authHelpers.signOut();
+            }
+          } else if (adminError) {
+            // An actual error occurred fetching admin profile
+            console.error("Error fetching admin profile:", adminError);
+            await authHelpers.signOut();
+          }
+          else {
+            // Not an admin, proceed with normal user profile
             const { data: userProfile } = await dbHelpers.getUserProfile(currentUser.id);
             if (userProfile) {
               setProfile(userProfile);

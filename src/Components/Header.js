@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   Search, 
   Bell, 
@@ -13,21 +14,21 @@ import {
   X
 } from 'lucide-react';
 import './Header.css';
-
-const logo = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5z'/%3E%3Cpath d='M2 17l10 5 10-5'/%3E%3Cpath d='M2 12l10 5 10-5'/%3E%3C/svg%3E";
+import logo from "../Assets/GaipLogo.png"; 
 
 const Header = ({ 
   onSearch = () => {}, 
   onCategoryChange = () => {}, 
   selectedCategory = 'All', 
   user = null, 
+  profile,
   onLogout = () => {}, 
   onShowAuth = () => {},
   onShowAbout = () => {},
   isGuestMode = false,
   currentVideo = null
 }) => {
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = profile?.role === 'admin';
   const [showAdmin, setShowAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -35,6 +36,7 @@ const Header = ({
   const [activeTab, setActiveTab] = useState('GAIP');
   const [isGaipDropdownOpen, setIsGaipDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -72,6 +74,15 @@ const Header = ({
         break;
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAboutClick = () => {
     setActiveTab('About');

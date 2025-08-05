@@ -10,6 +10,9 @@ import AdminDashboard from './Components/AdminDashboard';
 import AdminRoute from './Components/AdminRoute';
 import About from './Components/About/About';
 import AccessDenied from './Components/AccessDenied';
+import MainScreen from './Components/MainScreen';
+import AdminPage from './Components/AdminPage';
+
 
 function App() {
   return (
@@ -82,6 +85,8 @@ function AppRoutes() {
         path="/home"
         element={user ? <MainApplication /> : <Navigate to="/auth" />}
       />
+
+      <Route path="/main" element={<MainScreen />} />
 
       {/* Catch all unmatched routes - optional */}
       <Route path="*" element={<Navigate to="/" replace />} />

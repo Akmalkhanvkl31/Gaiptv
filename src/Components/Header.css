@@ -30,6 +30,7 @@
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1));
   border: 1px solid rgba(139, 92, 246, 0.2);
   transition: all 0.3s ease;
+  min-width: 140px;
 }
 
 .logo-section:hover {
@@ -128,6 +129,11 @@
   transition: all 0.3s ease;
 }
 
+.search-input:focus-within {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
 .search-input input {
   width: 280px;
   padding: 10px 40px 10px 16px;
@@ -136,6 +142,11 @@
   border: none;
   outline: none;
   color: white;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.search-input input::placeholder {
+  color: rgba(156, 163, 175, 0.7);
 }
 
 .search-input button {
@@ -154,6 +165,11 @@
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.search-input button:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
 }
 
 .control-button {
@@ -551,5 +567,15 @@ hr {
   }
   .mobile-menu {
     display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation-tabs, .search-input {
+    display: none;
+  }
+
+  .right-controls {
+    display: contents;
   }
 }

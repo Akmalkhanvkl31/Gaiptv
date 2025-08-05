@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles/AdminDashboard.css';
 import { 
   X, 
   Upload, 
@@ -49,10 +50,10 @@ import {
 const SettingsManager = () => {
   return (
     <div>
-      <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '700', marginBottom: '24px' }}>
+      <h3 className="settings-manager-title">
         Platform Settings
       </h3>
-      <div style={{ color: 'white' }}>
+      <div className="settings-manager-placeholder">
         Settings management interface will be here.
       </div>
     </div>
@@ -226,25 +227,11 @@ const AdminDashboard = () => {
 
   if (!showAdmin) {
     return (
-      <div style={{
-        padding: '40px',
-        textAlign: 'center',
-        background: 'linear-gradient(135deg, #1f2937, #111827)',
-        minHeight: '100vh',
-        color: 'white'
-      }}>
+      <div className="admin-closed-container">
         <h2>Admin Dashboard Closed</h2>
         <button 
           onClick={() => setShowAdmin(true)}
-          style={{
-            padding: '12px 24px',
-            background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-            border: 'none',
-            borderRadius: '8px',
-            color: 'white',
-            cursor: 'pointer',
-            marginTop: '16px'
-          }}
+          className="reopen-admin-button"
         >
           Reopen Admin Panel
         </button>
@@ -254,44 +241,16 @@ const AdminDashboard = () => {
 
   if (!isAdmin) {
     return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(0, 0, 0, 0.9)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: '16px',
-          padding: '40px',
-          textAlign: 'center',
-          maxWidth: '400px'
-        }}>
-          <Shield size={48} color="#ef4444" style={{ marginBottom: '16px' }} />
-          <h3 style={{ color: 'white', fontSize: '20px', marginBottom: '12px' }}>
+      <div className="access-denied-overlay">
+        <div className="access-denied-box">
+          <Shield size={48} color="#ef4444" className="access-denied-icon" />
+          <h3 className="access-denied-title">
             Access Denied
           </h3>
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)', marginBottom: '24px' }}>
+          <p className="access-denied-message">
             Administrator privileges required to access this page.
           </p>
-          <button
-            style={{
-              padding: '12px 24px',
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-              border: 'none',
-              borderRadius: '8px',
-              color: 'white',
-              cursor: 'pointer'
-            }}
-          >
+          <button className="go-back-button">
             Go Back
           </button>
         </div>
@@ -302,92 +261,32 @@ const AdminDashboard = () => {
   return (
     <>
       {/* Admin Panel */}
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(15, 15, 35, 0.98), rgba(26, 26, 46, 0.95))',
-        borderRadius: '24px',
-        border: '1px solid rgba(139, 92, 246, 0.3)',
-        boxShadow: '0 25px 50px rgba(139, 92, 246, 0.3)',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh'
-      }}>
+      <div className="admin-dashboard-container">
         {/* Header */}
-        <div style={{
-          padding: '24px 32px',
-          borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05))'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px'
-          }}>
-            <div style={{
-              padding: '12px',
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              borderRadius: '16px',
-              color: 'white',
-              boxShadow: '0 8px 25px rgba(245, 158, 11, 0.4)'
-            }}>
+        <div className="admin-dashboard-header">
+          <div className="admin-dashboard-header-title-container">
+            <div className="admin-dashboard-header-icon">
               <Settings size={24} />
             </div>
             <div>
-              <h2 style={{
-                color: 'white',
-                fontSize: '24px',
-                fontWeight: '700',
-                margin: 0,
-                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
-              }}>
+              <h2 className="admin-dashboard-header-title">
                 GAIPTV Admin Dashboard
               </h2>
-              <p style={{
-                color: 'rgba(245, 158, 11, 0.8)',
-                fontSize: '14px',
-                margin: 0,
-                fontWeight: '500'
-              }}>
+              <p className="admin-dashboard-header-subtitle">
                 Content Management & Platform Analytics
               </p>
             </div>
           </div>
           
-          <button
-            style={{
-              padding: '12px',
-              background: 'rgba(239, 68, 68, 0.2)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              borderRadius: '50%',
-              color: '#ef4444',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <button className="admin-dashboard-close-button">
             <X size={20} />
           </button>
         </div>
 
         {/* Content Area */}
-        <div style={{
-          display: 'flex',
-          flex: 1,
-          overflow: 'hidden'
-        }}>
+        <div className="admin-dashboard-content-area">
           {/* Sidebar Navigation */}
-          <div style={{
-            width: '280px',
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05))',
-            borderRight: '1px solid rgba(139, 92, 246, 0.2)',
-            padding: '24px',
-            overflowY: 'auto'
-          }}>
+          <div className="admin-dashboard-sidebar">
             {[
               { id: 'dashboard', label: 'Dashboard', icon: BarChart3, color: '#3b82f6' },
               { id: 'analytics', label: 'Analytics', icon: TrendingUp, color: '#22c55e' },
@@ -401,28 +300,7 @@ const AdminDashboard = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                style={{
-                  width: '100%',
-                  padding: '16px 20px',
-                  background: activeTab === tab.id 
-                    ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.2))' 
-                    : 'transparent',
-                  border: activeTab === tab.id 
-                    ? '1px solid rgba(139, 92, 246, 0.4)' 
-                    : '1px solid transparent',
-                  borderRadius: '16px',
-                  color: activeTab === tab.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  marginBottom: '8px',
-                  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
-                }}
+                className={`admin-dashboard-sidebar-button ${activeTab === tab.id ? 'active' : ''}`}
               >
                 <tab.icon size={18} style={{ color: tab.color }} />
                 <span>{tab.label}</span>
@@ -431,42 +309,17 @@ const AdminDashboard = () => {
           </div>
 
           {/* Main Content */}
-          <div style={{
-            flex: 1,
-            padding: '32px',
-            overflowY: 'auto'
-          }}>
+          <div className="admin-dashboard-main-content">
             {/* Dashboard Tab */}
             {activeTab === 'dashboard' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '32px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="tab-header">
+                  <h3 className="tab-title">
                     Platform Overview
                   </h3>
                   <button
                     onClick={loadDashboardData}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '14px'
-                    }}
+                    className="refresh-button"
                   >
                     <RefreshCw size={16} />
                     Refresh
@@ -474,12 +327,7 @@ const AdminDashboard = () => {
                 </div>
                 
                 {/* Stats Cards */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '20px',
-                  marginBottom: '32px'
-                }}>
+                <div className="stats-grid">
                   {[
                     { label: 'Total Users', value: analytics.totalUsers?.toLocaleString(), icon: Users, color: '#3b82f6', trend: '+12.5%' },
                     { label: 'Active Users', value: analytics.activeUsers?.toLocaleString(), icon: UserCheck, color: '#22c55e', trend: '+8.3%' },
@@ -488,43 +336,17 @@ const AdminDashboard = () => {
                     { label: 'Total Views', value: analytics.totalViews?.toLocaleString(), icon: Eye, color: '#06b6d4', trend: '+15.2%' },
                     { label: 'Revenue', value: `$${analytics.revenue?.toLocaleString()}`, icon: DollarSign, color: '#f59e0b', trend: '+23.8%' }
                   ].map((stat, index) => (
-                    <div key={index} style={{
-                      padding: '24px',
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                      borderRadius: '20px',
-                      border: '1px solid rgba(139, 92, 246, 0.2)',
-                      backdropFilter: 'blur(20px)'
-                    }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: '16px'
-                      }}>
+                    <div key={index} className="stat-card">
+                      <div className="stat-card-header">
                         <stat.icon size={24} style={{ color: stat.color }} />
-                        <span style={{
-                          fontSize: '12px',
-                          color: stat.color,
-                          fontWeight: '600',
-                          background: `${stat.color}20`,
-                          padding: '4px 8px',
-                          borderRadius: '8px'
-                        }}>
+                        <span className="stat-card-trend" style={{ color: stat.color, background: `${stat.color}20` }}>
                           {stat.trend}
                         </span>
                       </div>
-                      <div style={{
-                        fontSize: '28px',
-                        fontWeight: '700',
-                        color: 'white',
-                        marginBottom: '4px'
-                      }}>
+                      <div className="stat-card-value">
                         {stat.value}
                       </div>
-                      <div style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.7)'
-                      }}>
+                      <div className="stat-card-label">
                         {stat.label}
                       </div>
                     </div>
@@ -532,50 +354,20 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Recent Activity */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
-                  padding: '24px'
-                }}>
-                  <h4 style={{
-                    color: 'white',
-                    fontSize: '18px',
-                    fontWeight: '600',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                <div className="recent-activity-container">
+                  <h4 className="recent-activity-title">
                     <Activity size={20} />
                     Recent Activity
                   </h4>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '12px'
-                  }}>
+                  <div className="activity-list">
                     {analytics.recentActivities?.map(activity => (
-                      <div key={activity.id} style={{
-                        padding: '16px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}>
-                        <div style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px'
-                        }}>
-                          <div style={{
-                            padding: '8px',
+                      <div key={activity.id} className="activity-item">
+                        <div className="activity-item-icon-container">
+                          <div className="activity-item-icon" style={{
                             background: activity.type === 'video_upload' ? 'rgba(139, 92, 246, 0.2)' :
                                        activity.type === 'user_signup' ? 'rgba(34, 197, 94, 0.2)' :
                                        activity.type === 'live_event' ? 'rgba(239, 68, 68, 0.2)' :
-                                       'rgba(59, 130, 246, 0.2)',
-                            borderRadius: '8px'
+                                       'rgba(59, 130, 246, 0.2)'
                           }}>
                             {activity.type === 'video_upload' && <Upload size={16} />}
                             {activity.type === 'user_signup' && <Users size={16} />}
@@ -583,10 +375,10 @@ const AdminDashboard = () => {
                             {activity.type === 'news_publish' && <FileText size={16} />}
                           </div>
                           <div>
-                            <div style={{ color: 'white', fontSize: '14px', fontWeight: '500' }}>
+                            <div className="activity-item-description">
                               {activity.description}
                             </div>
-                            <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                            <div className="activity-item-meta">
                               by {activity.user} • {activity.time}
                             </div>
                           </div>
@@ -601,33 +393,13 @@ const AdminDashboard = () => {
             {/* Video Management Tab */}
             {activeTab === 'videos' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="video-management-header">
+                  <h3 className="video-management-title">
                     Video Management
                   </h3>
                   <button
                     onClick={() => setActiveTab('upload')}
-                    style={{
-                      padding: '12px 20px',
-                      background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
+                    className="upload-video-button"
                   >
                     <Plus size={16} />
                     Upload Video
@@ -635,50 +407,18 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Search and Filters */}
-                <div style={{
-                  display: 'flex',
-                  gap: '16px',
-                  marginBottom: '24px'
-                }}>
-                  <div style={{
-                    flex: 1,
-                    position: 'relative'
-                  }}>
-                    <Search size={16} style={{
-                      position: 'absolute',
-                      left: '12px',
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      color: 'rgba(255, 255, 255, 0.5)'
-                    }} />
+                <div className="search-filter-container">
+                  <div className="search-input-container">
+                    <Search size={16} className="search-input-icon" />
                     <input
                       type="text"
                       placeholder="Search videos..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px 12px 40px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(139, 92, 246, 0.3)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px',
-                        outline: 'none'
-                      }}
+                      className="search-input"
                     />
                   </div>
-                  <select
-                    style={{
-                      padding: '12px 16px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: '1px solid rgba(139, 92, 246, 0.3)',
-                      borderRadius: '8px',
-                      color: 'white',
-                      fontSize: '14px',
-                      outline: 'none'
-                    }}
-                  >
+                  <select className="category-select">
                     <option value="all">All Categories</option>
                     <option value="technology">Technology</option>
                     <option value="compliance">Compliance</option>
@@ -687,23 +427,8 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Video List */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    padding: '16px 20px',
-                    borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
-                    display: 'grid',
-                    gridTemplateColumns: '2fr 1fr 100px 100px 120px 80px',
-                    gap: '16px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    textTransform: 'uppercase'
-                  }}>
+                <div className="video-list-container">
+                  <div className="video-list-header">
                     <div>Video</div>
                     <div>Category</div>
                     <div>Views</div>
@@ -712,74 +437,36 @@ const AdminDashboard = () => {
                     <div>Actions</div>
                   </div>
                   {videos.map(video => (
-                    <div key={video.id} style={{
-                      padding: '16px 20px',
-                      borderBottom: '1px solid rgba(139, 92, 246, 0.1)',
-                      display: 'grid',
-                      gridTemplateColumns: '2fr 1fr 100px 100px 120px 80px',
-                      gap: '16px',
-                      alignItems: 'center'
-                    }}>
+                    <div key={video.id} className="video-list-item">
                       <div>
-                        <div style={{ color: 'white', fontWeight: '500', marginBottom: '4px' }}>
+                        <div className="video-title">
                           {video.title}
                         </div>
-                        <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                        <div className="video-id">
                           ID: {video.id}
                         </div>
                       </div>
-                      <div style={{
-                        padding: '4px 8px',
-                        background: 'rgba(139, 92, 246, 0.2)',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        color: '#8b5cf6',
-                        width: 'fit-content'
-                      }}>
+                      <div className="video-category">
                         {video.category}
                       </div>
-                      <div style={{ color: 'white' }}>
+                      <div className="video-views">
                         {video.views.toLocaleString()}
                       </div>
-                      <div style={{ color: 'white' }}>
+                      <div className="video-duration">
                         {video.duration}
                       </div>
                       <div>
-                        <span style={{
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          background: video.isLive ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.2)',
-                          color: video.isLive ? '#ef4444' : '#22c55e'
-                        }}>
+                        <span className={`video-status ${video.isLive ? 'live' : 'published'}`}>
                           {video.isLive ? 'LIVE' : video.status}
                         </span>
                       </div>
-                      <div style={{
-                        display: 'flex',
-                        gap: '8px'
-                      }}>
-                        <button style={{
-                          padding: '6px',
-                          background: 'rgba(59, 130, 246, 0.2)',
-                          border: 'none',
-                          borderRadius: '4px',
-                          color: '#3b82f6',
-                          cursor: 'pointer'
-                        }}>
+                      <div className="video-actions">
+                        <button className="action-button edit-button">
                           <Edit size={14} />
                         </button>
                         <button 
                           onClick={() => handleDeleteItem('video', video.id)}
-                          style={{
-                            padding: '6px',
-                            background: 'rgba(239, 68, 68, 0.2)',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#ef4444',
-                            cursor: 'pointer'
-                          }}
+                          className="action-button delete-button"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -793,53 +480,23 @@ const AdminDashboard = () => {
             {/* Upload Content Tab */}
             {activeTab === 'upload' && (
               <div>
-                <h3 style={{
-                  color: 'white',
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  marginBottom: '24px'
-                }}>
+                <h3 className="upload-content-title">
                   Upload New Content
                 </h3>
                 
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '32px'
-                }}>
+                <div className="upload-grid">
                   {/* Video Upload */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    padding: '24px'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '20px'
-                    }}>
+                  <div className="upload-form-container">
+                    <div className="upload-form-header">
                       <Video size={24} style={{ color: '#8b5cf6' }} />
-                      <h4 style={{
-                        color: 'white',
-                        fontSize: '18px',
-                        fontWeight: '600',
-                        margin: 0
-                      }}>
+                      <h4 className="upload-form-title">
                         Upload Video
                       </h4>
                     </div>
                     
                     <form onSubmit={handleVideoSubmit}>
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           Video Title *
                         </label>
                         <input
@@ -848,27 +505,12 @@ const AdminDashboard = () => {
                           onChange={(e) => setNewVideo({...newVideo, title: e.target.value})}
                           placeholder="Enter video title..."
                           required
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none'
-                          }}
+                          className="form-input"
                         />
                       </div>
 
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           Description
                         </label>
                         <textarea
@@ -876,44 +518,19 @@ const AdminDashboard = () => {
                           onChange={(e) => setNewVideo({...newVideo, description: e.target.value})}
                           placeholder="Enter video description..."
                           rows={4}
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none',
-                            resize: 'vertical'
-                          }}
+                          className="form-textarea"
                         />
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                      <div className="form-grid">
                         <div>
-                          <label style={{
-                            display: 'block',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            marginBottom: '8px'
-                          }}>
+                          <label className="form-label">
                             Category
                           </label>
                           <select
                             value={newVideo.category}
                             onChange={(e) => setNewVideo({...newVideo, category: e.target.value})}
-                            style={{
-                              width: '100%',
-                              padding: '12px 16px',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              border: '1px solid rgba(139, 92, 246, 0.3)',
-                              borderRadius: '12px',
-                              color: 'white',
-                              fontSize: '14px',
-                              outline: 'none'
-                            }}
+                            className="form-select"
                           >
                             <option value="Technology" style={{ background: '#1f2937' }}>Technology</option>
                             <option value="Compliance" style={{ background: '#1f2937' }}>Compliance</option>
@@ -924,13 +541,7 @@ const AdminDashboard = () => {
                         </div>
 
                         <div>
-                          <label style={{
-                            display: 'block',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            marginBottom: '8px'
-                          }}>
+                          <label className="form-label">
                             Duration
                           </label>
                           <input
@@ -938,28 +549,13 @@ const AdminDashboard = () => {
                             value={newVideo.duration}
                             onChange={(e) => setNewVideo({...newVideo, duration: e.target.value})}
                             placeholder="e.g., 45:30"
-                            style={{
-                              width: '100%',
-                              padding: '12px 16px',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              border: '1px solid rgba(139, 92, 246, 0.3)',
-                              borderRadius: '12px',
-                              color: 'white',
-                              fontSize: '14px',
-                              outline: 'none'
-                            }}
+                            className="form-input"
                           />
                         </div>
                       </div>
 
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           Speaker/Presenter
                         </label>
                         <input
@@ -967,27 +563,12 @@ const AdminDashboard = () => {
                           value={newVideo.speaker}
                           onChange={(e) => setNewVideo({...newVideo, speaker: e.target.value})}
                           placeholder="Enter speaker name and title..."
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none'
-                          }}
+                          className="form-input"
                         />
                       </div>
 
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           Video URL *
                         </label>
                         <input
@@ -996,36 +577,19 @@ const AdminDashboard = () => {
                           onChange={(e) => setNewVideo({...newVideo, videoUrl: e.target.value})}
                           placeholder="https://player.vimeo.com/video/..."
                           required
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none'
-                          }}
+                          className="form-input"
                         />
                       </div>
 
-                      <div style={{ marginBottom: '20px' }}>
-                        <label style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          cursor: 'pointer'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-checkbox-label">
                           <input
                             type="checkbox"
                             checked={newVideo.isLive}
                             onChange={(e) => setNewVideo({...newVideo, isLive: e.target.checked})}
-                            style={{ accentColor: '#8b5cf6' }}
+                            className="form-checkbox"
                           />
-                          <span style={{
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            fontSize: '14px'
-                          }}>
+                          <span className="form-checkbox-text">
                             Live Stream
                           </span>
                         </label>
@@ -1034,35 +598,11 @@ const AdminDashboard = () => {
                       <button
                         type="submit"
                         disabled={loading}
-                        style={{
-                          width: '100%',
-                          padding: '12px 24px',
-                          background: loading 
-                            ? 'rgba(139, 92, 246, 0.5)' 
-                            : 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: loading ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.3s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '8px'
-                        }}
+                        className="submit-button upload-video-submit"
                       >
                         {loading ? (
                           <>
-                            <div style={{
-                              width: '16px',
-                              height: '16px',
-                              border: '2px solid rgba(255, 255, 255, 0.3)',
-                              borderTop: '2px solid white',
-                              borderRadius: '50%',
-                              animation: 'spin 1s linear infinite'
-                            }} />
+                            <div className="loading-spinner" />
                             Uploading...
                           </>
                         ) : (
@@ -1076,38 +616,17 @@ const AdminDashboard = () => {
                   </div>
 
                   {/* News Publishing */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                    borderRadius: '20px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    padding: '24px'
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '20px'
-                    }}>
+                  <div className="upload-form-container">
+                    <div className="upload-form-header">
                       <FileText size={24} style={{ color: '#f59e0b' }} />
-                      <h4 style={{
-                        color: 'white',
-                        fontSize: '18px',
-                        fontWeight: '600',
-                        margin: 0
-                      }}>
+                      <h4 className="upload-form-title">
                         Publish News
                       </h4>
                     </div>
 
                     <form onSubmit={handleNewsSubmit}>
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           News Title *
                         </label>
                         <input
@@ -1116,42 +635,18 @@ const AdminDashboard = () => {
                           onChange={(e) => setNewNews({...newNews, title: e.target.value})}
                           placeholder="Enter news headline..."
                           required
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none'
-                          }}
+                          className="form-input"
                         />
                       </div>
 
-                      <div style={{ marginBottom: '16px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           News Type
                         </label>
                         <select
                           value={newNews.type}
                           onChange={(e) => setNewNews({...newNews, type: e.target.value})}
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none'
-                          }}
+                          className="form-select"
                         >
                           <option value="regular" style={{ background: '#1f2937' }}>Regular News</option>
                           <option value="update" style={{ background: '#1f2937' }}>Important Update</option>
@@ -1159,14 +654,8 @@ const AdminDashboard = () => {
                         </select>
                       </div>
 
-                      <div style={{ marginBottom: '20px' }}>
-                        <label style={{
-                          display: 'block',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '8px'
-                        }}>
+                      <div className="form-group">
+                        <label className="form-label">
                           Content *
                         </label>
                         <textarea
@@ -1175,52 +664,18 @@ const AdminDashboard = () => {
                           placeholder="Enter news content..."
                           rows={8}
                           required
-                          style={{
-                            width: '100%',
-                            padding: '12px 16px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '12px',
-                            color: 'white',
-                            fontSize: '14px',
-                            outline: 'none',
-                            resize: 'vertical'
-                          }}
+                          className="form-textarea"
                         />
                       </div>
 
                       <button
                         type="submit"
                         disabled={loading}
-                        style={{
-                          width: '100%',
-                          padding: '12px 24px',
-                          background: loading 
-                            ? 'rgba(245, 158, 11, 0.5)' 
-                            : 'linear-gradient(135deg, #f59e0b, #d97706)',
-                          border: 'none',
-                          borderRadius: '12px',
-                          color: 'white',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: loading ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.3s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '8px'
-                        }}
+                        className="submit-button publish-news-submit"
                       >
                         {loading ? (
                           <>
-                            <div style={{
-                              width: '16px',
-                              height: '16px',
-                              border: '2px solid rgba(255, 255, 255, 0.3)',
-                              borderTop: '2px solid white',
-                              borderRadius: '50%',
-                              animation: 'spin 1s linear infinite'
-                            }} />
+                            <div className="loading-spinner" />
                             Publishing...
                           </>
                         ) : (
@@ -1239,49 +694,22 @@ const AdminDashboard = () => {
             {/* Analytics Tab */}
             {activeTab === 'analytics' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="analytics-header">
+                  <h3 className="analytics-title">
                     Platform Analytics
                   </h3>
-                  <div style={{ display: 'flex', gap: '12px' }}>
+                  <div className="analytics-controls">
                     <select
                       value={selectedDateRange}
                       onChange={(e) => setSelectedDateRange(e.target.value)}
-                      style={{
-                        padding: '8px 12px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        border: '1px solid rgba(139, 92, 246, 0.3)',
-                        borderRadius: '8px',
-                        color: 'white',
-                        fontSize: '14px'
-                      }}
+                      className="date-range-select"
                     >
                       <option value="7d">Last 7 days</option>
                       <option value="30d">Last 30 days</option>
                       <option value="90d">Last 90 days</option>
                       <option value="1y">Last year</option>
                     </select>
-                    <button style={{
-                      padding: '8px 12px',
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}>
+                    <button className="export-button">
                       <Download size={16} />
                       Export
                     </button>
@@ -1289,36 +717,13 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Analytics Charts */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '2fr 1fr',
-                  gap: '24px',
-                  marginBottom: '24px'
-                }}>
+                <div className="analytics-grid">
                   {/* Main Chart */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    padding: '24px'
-                  }}>
-                    <h4 style={{
-                      color: 'white',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      marginBottom: '20px'
-                    }}>
+                  <div className="chart-container">
+                    <h4 className="chart-title">
                       User Activity Trends
                     </h4>
-                    <div style={{
-                      height: '300px',
-                      background: 'rgba(0, 0, 0, 0.2)',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'rgba(255, 255, 255, 0.5)'
-                    }}>
+                    <div className="chart-placeholder">
                       Chart visualization would go here
                       <br />
                       (Integrate with Chart.js or similar)
@@ -1326,47 +731,22 @@ const AdminDashboard = () => {
                   </div>
 
                   {/* Top Categories */}
-                  <div style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                    borderRadius: '16px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    padding: '24px'
-                  }}>
-                    <h4 style={{
-                      color: 'white',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      marginBottom: '20px'
-                    }}>
+                  <div className="top-categories-container">
+                    <h4 className="top-categories-title">
                       Top Categories
                     </h4>
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px'
-                    }}>
+                    <div className="category-list">
                       {analytics.topCategories?.map((category, index) => (
-                        <div key={category.name} style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '12px',
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          borderRadius: '8px'
-                        }}>
+                        <div key={category.name} className="category-item">
                           <div>
-                            <div style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>
+                            <div className="category-name">
                               {category.name}
                             </div>
-                            <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                            <div className="category-views">
                               {category.views.toLocaleString()} views
                             </div>
                           </div>
-                          <div style={{
-                            color: category.growth > 10 ? '#22c55e' : '#f59e0b',
-                            fontSize: '12px',
-                            fontWeight: '600'
-                          }}>
+                          <div className="category-growth" style={{ color: category.growth > 10 ? '#22c55e' : '#f59e0b' }}>
                             +{category.growth}%
                           </div>
                         </div>
@@ -1376,37 +756,19 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Performance Metrics */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '20px'
-                }}>
+                <div className="performance-metrics-grid">
                   {[
                     { label: 'Avg Watch Time', value: `${analytics.avgWatchTime} min`, icon: Clock, color: '#3b82f6' },
                     { label: 'Completion Rate', value: '78%', icon: CheckCircle, color: '#22c55e' },
                     { label: 'User Retention', value: '85%', icon: Users, color: '#8b5cf6' },
                     { label: 'Daily Active Users', value: '2,847', icon: Activity, color: '#f59e0b' }
                   ].map((metric, index) => (
-                    <div key={index} style={{
-                      padding: '20px',
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                      borderRadius: '16px',
-                      border: '1px solid rgba(139, 92, 246, 0.2)',
-                      textAlign: 'center'
-                    }}>
-                      <metric.icon size={32} style={{ color: metric.color, marginBottom: '12px' }} />
-                      <div style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: 'white',
-                        marginBottom: '4px'
-                      }}>
+                    <div key={index} className="metric-card">
+                      <metric.icon size={32} className="metric-icon" style={{ color: metric.color }} />
+                      <div className="metric-value">
                         {metric.value}
                       </div>
-                      <div style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.7)'
-                      }}>
+                      <div className="metric-label">
                         {metric.label}
                       </div>
                     </div>
@@ -1418,46 +780,16 @@ const AdminDashboard = () => {
             {/* User Management Tab */}
             {activeTab === 'users' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="user-management-header">
+                  <h3 className="user-management-title">
                     User Management
                   </h3>
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <button style={{
-                      padding: '8px 16px',
-                      background: 'linear-gradient(135deg, #3b82f6, #1e40af)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}>
+                  <div className="user-management-actions">
+                    <button className="send-newsletter-button">
                       <Mail size={16} />
                       Send Newsletter
                     </button>
-                    <button style={{
-                      padding: '8px 16px',
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}>
+                    <button className="export-button">
                       <Download size={16} />
                       Export Users
                     </button>
@@ -1465,36 +797,18 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* User Statistics */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
-                  marginBottom: '24px'
-                }}>
+                <div className="user-stats-grid">
                   {[
                     { label: 'Total Users', value: analytics.totalUsers?.toLocaleString(), color: '#3b82f6' },
                     { label: 'Active Today', value: analytics.newUsersToday?.toString(), color: '#22c55e' },
                     { label: 'Premium Users', value: '2,847', color: '#f59e0b' },
                     { label: 'New This Week', value: '847', color: '#8b5cf6' }
                   ].map((stat, index) => (
-                    <div key={index} style={{
-                      padding: '16px',
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(139, 92, 246, 0.2)'
-                    }}>
-                      <div style={{
-                        fontSize: '20px',
-                        fontWeight: '700',
-                        color: stat.color,
-                        marginBottom: '4px'
-                      }}>
+                    <div key={index} className="user-stat-card">
+                      <div className="user-stat-value" style={{ color: stat.color }}>
                         {stat.value}
                       </div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.7)'
-                      }}>
+                      <div className="user-stat-label">
                         {stat.label}
                       </div>
                     </div>
@@ -1502,23 +816,8 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* User List */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    padding: '16px 20px',
-                    borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
-                    display: 'grid',
-                    gridTemplateColumns: '2fr 1fr 1fr 100px 100px 80px',
-                    gap: '16px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    textTransform: 'uppercase'
-                  }}>
+                <div className="user-list-container">
+                  <div className="user-list-header">
                     <div>User</div>
                     <div>Role</div>
                     <div>Status</div>
@@ -1527,72 +826,34 @@ const AdminDashboard = () => {
                     <div>Actions</div>
                   </div>
                   {users.map(user => (
-                    <div key={user.id} style={{
-                      padding: '16px 20px',
-                      borderBottom: '1px solid rgba(139, 92, 246, 0.1)',
-                      display: 'grid',
-                      gridTemplateColumns: '2fr 1fr 1fr 100px 100px 80px',
-                      gap: '16px',
-                      alignItems: 'center'
-                    }}>
+                    <div key={user.id} className="user-list-item">
                       <div>
-                        <div style={{ color: 'white', fontWeight: '500', marginBottom: '4px' }}>
+                        <div className="user-name">
                           {user.name}
                         </div>
-                        <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                        <div className="user-email">
                           {user.email}
                         </div>
                       </div>
-                      <div style={{
-                        padding: '4px 8px',
-                        background: 'rgba(59, 130, 246, 0.2)',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        color: '#3b82f6',
-                        width: 'fit-content'
-                      }}>
+                      <div className="user-role">
                         {user.role}
                       </div>
                       <div>
-                        <span style={{
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          background: user.status === 'active' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                          color: user.status === 'active' ? '#22c55e' : '#ef4444'
-                        }}>
+                        <span className={`user-status ${user.status}`}>
                           {user.status}
                         </span>
                       </div>
-                      <div style={{ color: 'white' }}>
+                      <div className="user-watch-time">
                         {user.totalWatchTime}h
                       </div>
-                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                      <div className="user-last-active">
                         {user.lastActive}
                       </div>
-                      <div style={{
-                        display: 'flex',
-                        gap: '8px'
-                      }}>
-                        <button style={{
-                          padding: '6px',
-                          background: 'rgba(59, 130, 246, 0.2)',
-                          border: 'none',
-                          borderRadius: '4px',
-                          color: '#3b82f6',
-                          cursor: 'pointer'
-                        }}>
+                      <div className="user-actions">
+                        <button className="action-button edit-button">
                           <Edit size={14} />
                         </button>
-                        <button style={{
-                          padding: '6px',
-                          background: 'rgba(245, 158, 11, 0.2)',
-                          border: 'none',
-                          borderRadius: '4px',
-                          color: '#f59e0b',
-                          cursor: 'pointer'
-                        }}>
+                        <button className="action-button mail-button">
                           <Mail size={14} />
                         </button>
                       </div>
@@ -1605,33 +866,13 @@ const AdminDashboard = () => {
             {/* News Management Tab */}
             {activeTab === 'news' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="news-management-header">
+                  <h3 className="news-management-title">
                     News Management
                   </h3>
                   <button
                     onClick={() => setActiveTab('upload')}
-                    style={{
-                      padding: '12px 20px',
-                      background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px'
-                    }}
+                    className="publish-news-button"
                   >
                     <Plus size={16} />
                     Publish News
@@ -1639,23 +880,8 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* News List */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    padding: '16px 20px',
-                    borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
-                    display: 'grid',
-                    gridTemplateColumns: '2fr 100px 100px 120px 120px 80px',
-                    gap: '16px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    textTransform: 'uppercase'
-                  }}>
+                <div className="news-list-container">
+                  <div className="news-list-header">
                     <div>Article</div>
                     <div>Type</div>
                     <div>Views</div>
@@ -1664,80 +890,38 @@ const AdminDashboard = () => {
                     <div>Actions</div>
                   </div>
                   {news.map(article => (
-                    <div key={article.id} style={{
-                      padding: '16px 20px',
-                      borderBottom: '1px solid rgba(139, 92, 246, 0.1)',
-                      display: 'grid',
-                      gridTemplateColumns: '2fr 100px 100px 120px 120px 80px',
-                      gap: '16px',
-                      alignItems: 'center'
-                    }}>
+                    <div key={article.id} className="news-list-item">
                       <div>
-                        <div style={{ color: 'white', fontWeight: '500', marginBottom: '4px' }}>
+                        <div className="article-title">
                           {article.title}
                         </div>
-                        <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                        <div className="article-id">
                           ID: {article.id}
                         </div>
                       </div>
                       <div>
-                        <span style={{
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          background: article.type === 'breaking' ? 'rgba(239, 68, 68, 0.2)' :
-                                     article.type === 'update' ? 'rgba(59, 130, 246, 0.2)' :
-                                     'rgba(156, 163, 175, 0.2)',
-                          color: article.type === 'breaking' ? '#ef4444' :
-                                 article.type === 'update' ? '#3b82f6' :
-                                 '#9ca3af'
-                        }}>
+                        <span className={`article-type ${article.type}`}>
                           {article.type}
                         </span>
                       </div>
-                      <div style={{ color: 'white' }}>
+                      <div className="article-views">
                         {article.views.toLocaleString()}
                       </div>
                       <div>
-                        <span style={{
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          background: 'rgba(34, 197, 94, 0.2)',
-                          color: '#22c55e'
-                        }}>
+                        <span className="article-status">
                           {article.status}
                         </span>
                       </div>
-                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+                      <div className="article-published-at">
                         {article.publishedAt}
                       </div>
-                      <div style={{
-                        display: 'flex',
-                        gap: '8px'
-                      }}>
-                        <button style={{
-                          padding: '6px',
-                          background: 'rgba(59, 130, 246, 0.2)',
-                          border: 'none',
-                          borderRadius: '4px',
-                          color: '#3b82f6',
-                          cursor: 'pointer'
-                        }}>
+                      <div className="video-actions">
+                        <button className="action-button edit-button">
                           <Edit size={14} />
                         </button>
                         <button 
                           onClick={() => handleDeleteItem('news', article.id)}
-                          style={{
-                            padding: '6px',
-                            background: 'rgba(239, 68, 68, 0.2)',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#ef4444',
-                            cursor: 'pointer'
-                          }}
+                          className="action-button delete-button"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -1751,118 +935,47 @@ const AdminDashboard = () => {
             {/* Live Events Tab */}
             {activeTab === 'live' && (
               <div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '24px'
-                }}>
-                  <h3 style={{
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: '700',
-                    margin: 0
-                  }}>
+                <div className="live-events-header">
+                  <h3 className="live-events-title">
                     Live Events Management
                   </h3>
-                  <button style={{
-                    padding: '12px 20px',
-                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                  <button className="start-live-stream-button">
                     <Radio size={16} />
                     Start Live Stream
                   </button>
                 </div>
 
                 {/* Current Live Events */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  padding: '24px',
-                  marginBottom: '24px'
-                }}>
-                  <h4 style={{
-                    color: '#ef4444',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    marginBottom: '16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      background: '#ef4444',
-                      borderRadius: '50%',
-                      animation: 'pulse 2s infinite'
-                    }}></div>
+                <div className="current-live-container">
+                  <h4 className="current-live-title">
+                    <div className="live-indicator"></div>
                     Currently Live
                   </h4>
                   
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto auto',
-                    gap: '16px',
-                    alignItems: 'center',
-                    padding: '16px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '12px'
-                  }}>
+                  <div className="live-event-item">
                     <div>
-                      <div style={{ color: 'white', fontWeight: '600', marginBottom: '4px' }}>
+                      <div className="live-event-title">
                         Insurance AI Summit 2025
                       </div>
-                      <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                      <div className="live-event-description">
                         Live coverage of the annual insurance innovation summit
                       </div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      fontSize: '14px',
-                      color: 'white'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div className="live-event-stats">
+                      <div className="live-event-stat">
                         <Eye size={16} />
                         12,847 viewers
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div className="live-event-stat">
                         <Clock size={16} />
                         2h 15m
                       </div>
                     </div>
-                    <div style={{
-                      display: 'flex',
-                      gap: '8px'
-                    }}>
-                      <button style={{
-                        padding: '8px 16px',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        color: 'white',
-                        cursor: 'pointer'
-                      }}>
+                    <div className="live-event-actions">
+                      <button className="manage-live-button">
                         Manage
                       </button>
-                      <button style={{
-                        padding: '8px 16px',
-                        background: 'rgba(239, 68, 68, 0.8)',
-                        border: 'none',
-                        borderRadius: '8px',
-                        color: 'white',
-                        cursor: 'pointer'
-                      }}>
+                      <button className="end-stream-button">
                         End Stream
                       </button>
                     </div>
@@ -1870,30 +983,13 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Scheduled Events */}
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(139, 92, 246, 0.05))',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
-                  padding: '24px'
-                }}>
-                  <h4 style={{
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
+                <div className="scheduled-events-container">
+                  <h4 className="scheduled-events-title">
                     <Calendar size={16} />
                     Scheduled Events
                   </h4>
 
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '12px'
-                  }}>
+                  <div className="scheduled-event-list">
                     {[
                       {
                         title: 'Risk Management Workshop',
@@ -1914,60 +1010,28 @@ const AdminDashboard = () => {
                         status: 'draft'
                       }
                     ].map((event, index) => (
-                      <div key={index} style={{
-                        padding: '16px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '12px',
-                        display: 'grid',
-                        gridTemplateColumns: '2fr 1fr auto auto',
-                        gap: '16px',
-                        alignItems: 'center'
-                      }}>
+                      <div key={index} className="scheduled-event-item">
                         <div>
-                          <div style={{ color: 'white', fontWeight: '500', marginBottom: '4px' }}>
+                          <div className="scheduled-event-title">
                             {event.title}
                           </div>
-                          <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                          <div className="scheduled-event-date">
                             {event.date}
                           </div>
                         </div>
-                        <div style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                        <div className="scheduled-event-registrations">
                           {event.registrations} registered
                         </div>
                         <div>
-                          <span style={{
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            background: event.status === 'scheduled' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                            color: event.status === 'scheduled' ? '#22c55e' : '#f59e0b'
-                          }}>
+                          <span className={`scheduled-event-status ${event.status}`}>
                             {event.status}
                           </span>
                         </div>
-                        <div style={{
-                          display: 'flex',
-                          gap: '8px'
-                        }}>
-                          <button style={{
-                            padding: '6px',
-                            background: 'rgba(59, 130, 246, 0.2)',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#3b82f6',
-                            cursor: 'pointer'
-                          }}>
+                        <div className="scheduled-event-actions">
+                          <button className="action-button edit-button">
                             <Edit size={14} />
                           </button>
-                          <button style={{
-                            padding: '6px',
-                            background: 'rgba(239, 68, 68, 0.2)',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#ef4444',
-                            cursor: 'pointer'
-                          }}>
+                          <button className="action-button go-live-button">
                             <Radio size={14} />
                           </button>
                         </div>
@@ -1985,47 +1049,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <style>{`
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          
-          @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
-          }
-          
-          input:focus, textarea:focus, select:focus {
-            border-color: #8b5cf6 !important;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
-          }
-          
-          button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-          }
-          
-          @media (max-width: 768px) {
-            .admin-panel {
-              top: 0 !important;
-              left: 0 !important;
-              right: 0 !important;
-              bottom: 0 !important;
-              border-radius: 0 !important;
-            }
-            
-            .admin-sidebar {
-              width: 100% !important;
-              border-right: none !important;
-              border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
-            }
-            
-            .admin-content {
-              padding: 16px !important;
-            }
-          }
-        `}</style>
       </div>
     </>
   );

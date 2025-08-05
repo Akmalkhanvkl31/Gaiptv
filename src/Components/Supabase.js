@@ -271,12 +271,11 @@ export const dbHelpers = {
   getUserProfile: async (userId) => {
     try {
       const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .limit(1)
-      .maybeSingle();;
-      
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
       if (error) {
         // If the error is that no rows were found, this is not a "real" error.
         // It just means the profile doesn't exist yet. Return null.
@@ -304,15 +303,15 @@ export const dbHelpers = {
         .from('admins')
         .select('*')
         .eq('id', userId)
-        .maybeSingle();
+        .single();
 
       if (error) {
+        if (error.code === 'PGRST116') {
+          console.log(`No admin profile found for user ${userId}.`);
+          return { data: null, error: null };
+        }
         console.error('Get admin profile error:', error);
         return { data: null, error: error.message };
-      }
-      
-      if (!data) {
-        console.log(`No admin profile found for user ${userId}.`);
       }
       
       return { data, error: null };

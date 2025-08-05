@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, Radio, Users, Eye, Play, Star, TrendingUp,
   CheckCircle, Zap, Award, Shield
-} from 'lucide-react';  // imported all missing icons
-import { useNavigate } from 'react-router-dom';
+} from 'lucide-react';
 import AdBanner from './AdBanner';
 import LivePlayer from './LivePlayer';
 import './GuestLanding.css';
 
 const GuestLanding = ({ liveStreams, featuredVideos, news, onSignIn }) => {
   const [selectedLiveStream, setSelectedLiveStream] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);  // declared isPlaying state
-  const [hoveredVideo, setHoveredVideo] = useState(null); // declared hoveredVideo state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hoveredVideo, setHoveredVideo] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +28,10 @@ const GuestLanding = ({ liveStreams, featuredVideos, news, onSignIn }) => {
 
   const handleGetStarted = () => {
     if(onSignIn) onSignIn();
+  };
+
+  const handleLogin = () => {
+    navigate('/main');
   };
 
   return (
@@ -466,7 +470,7 @@ const GuestLanding = ({ liveStreams, featuredVideos, news, onSignIn }) => {
         {/* CTA to See More */}
         <div style={{ textAlign: 'center' }}>
           <button
-            onClick={handleGetStarted}
+            onClick={onSignIn}
             style={{
               padding: '16px 32px',
               background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',
@@ -549,10 +553,10 @@ const GuestLanding = ({ liveStreams, featuredVideos, news, onSignIn }) => {
                       background: 'rgba(255, 255, 255, 0.05)',
                       borderRadius: '12px',
                       border: '1px solid rgba(139, 92, 246, 0.2)',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onClick={handleGetStarted}
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onClick={onSignIn}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
                       e.currentTarget.style.transform = 'translateX(4px)';
@@ -619,7 +623,7 @@ const GuestLanding = ({ liveStreams, featuredVideos, news, onSignIn }) => {
               </div>
 
               <button
-                onClick={handleGetStarted}
+                onClick={onSignIn}
                 style={{
                   padding: '12px 24px',
                   background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))',
